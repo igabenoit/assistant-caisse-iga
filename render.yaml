@@ -1,0 +1,38 @@
+# Les plans payants évitent la mise en veille du service. Vérifier le devis Render avant création.
+services:
+  - type: web
+    name: assistant-caisse-iga
+    runtime: python
+    region: ohio
+    plan: 0.5c-512mb
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 24 --timeout 150 --access-logfile - --error-logfile -
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10
+      - key: APP_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: assistant-caisse-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: KIOSK_PIN
+        sync: false
+      - key: SEED_DEMO
+        value: "true"
+      - key: LOG_RETENTION_DAYS
+        value: "30"
+databases:
+  - name: assistant-caisse-db
+    region: ohio
+    plan: 0.1c-256mb
+    databaseName: assistant_caisse
+    user: assistant_caisse
+    postgresMajorVersion: "17"
+    diskSizeGB: 1
+    ipAllowList: []

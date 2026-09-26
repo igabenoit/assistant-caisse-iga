@@ -1,0 +1,1 @@
+{"name":"assistant-caisse-ui-tests","private":true,"version":"1.0.0","description":"Optional DOM tests only; the production application does not require Node.","devDependencies":{"jsdom":"26.1.0"}}

@@ -1,0 +1,294 @@
+{
+  "products": [
+    {
+      "name": "Avocat",
+      "code": "D001",
+      "keywords": "avocado; avocats",
+      "category": "Fruits",
+      "image": "/static/images/demo-01.jpg",
+      "note": "Vérifier le format et la variété.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Banane",
+      "code": "D002",
+      "keywords": "bananes; banana",
+      "category": "Fruits",
+      "image": "/static/images/demo-02.jpg",
+      "note": "Conventionnelle — ne pas confondre avec bio.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Banane bio",
+      "code": "D003",
+      "keywords": "bananes bio; banane biologique; organic banana",
+      "category": "Fruits",
+      "image": "/static/images/demo-03.jpg",
+      "note": "Biologique — photo représentative.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Pomme Gala",
+      "code": "D004",
+      "keywords": "pommes gala; gala apple",
+      "category": "Fruits",
+      "image": "/static/images/demo-04.jpg",
+      "note": "Gala — photo représentative.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Pomme Granny Smith",
+      "code": "D005",
+      "keywords": "pommes vertes; granny; pomme verte",
+      "category": "Fruits",
+      "image": "/static/images/demo-05.jpg",
+      "note": "Granny Smith, verte.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Pomme Honeycrisp",
+      "code": "D006",
+      "keywords": "pommes honey crisp; honeycrisp",
+      "category": "Fruits",
+      "image": "/static/images/demo-06.jpg",
+      "note": "Honeycrisp — photo représentative.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Orange",
+      "code": "D007",
+      "keywords": "oranges; navel",
+      "category": "Fruits",
+      "image": "/static/images/demo-07.jpg",
+      "note": "Vérifier le format.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Citron",
+      "code": "D008",
+      "keywords": "citrons; lemon",
+      "category": "Fruits",
+      "image": "/static/images/demo-08.jpg",
+      "note": "Citron jaune.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Lime",
+      "code": "D009",
+      "keywords": "limes; citron vert",
+      "category": "Fruits",
+      "image": "/static/images/demo-09.jpg",
+      "note": "Citron vert.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Poire Bartlett",
+      "code": "D010",
+      "keywords": "poires; bartlett",
+      "category": "Fruits",
+      "image": "/static/images/demo-10.jpg",
+      "note": "Photo représentative.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Mangue",
+      "code": "D011",
+      "keywords": "mangues; mango",
+      "category": "Fruits",
+      "image": "/static/images/demo-11.jpg",
+      "note": "Vérifier la variété.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Ananas",
+      "code": "D012",
+      "keywords": "pineapple",
+      "category": "Fruits",
+      "image": "/static/images/demo-12.jpg",
+      "note": "Entier.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Kiwi",
+      "code": "D013",
+      "keywords": "kiwis",
+      "category": "Fruits",
+      "image": "/static/images/demo-13.jpg",
+      "note": "Vérifier la variété.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Fraise",
+      "code": "D014",
+      "keywords": "fraises; strawberry",
+      "category": "Fruits",
+      "image": "/static/images/demo-14.jpg",
+      "note": "Vérifier le format de vente.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Raisin rouge",
+      "code": "D015",
+      "keywords": "raisins rouges; raisin",
+      "category": "Fruits",
+      "image": "/static/images/demo-15.jpg",
+      "note": "Photo représentative — vérifier la variété.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Coriandre",
+      "code": "D016",
+      "keywords": "cilantro; coriandres",
+      "category": "Herbes",
+      "image": "/static/images/demo-16.jpg",
+      "note": "Ne pas confondre avec le persil.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Persil",
+      "code": "D017",
+      "keywords": "persils; parsley",
+      "category": "Herbes",
+      "image": "/static/images/demo-17.jpg",
+      "note": "Photo représentative.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Gingembre",
+      "code": "D018",
+      "keywords": "gingembres; ginger",
+      "category": "Légumes",
+      "image": "/static/images/demo-18.jpg",
+      "note": "Racine.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Concombre",
+      "code": "D019",
+      "keywords": "concombres; cucumber",
+      "category": "Légumes",
+      "image": "/static/images/demo-19.jpg",
+      "note": "Vérifier le format.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Brocoli",
+      "code": "D020",
+      "keywords": "brocolis; broccoli",
+      "category": "Légumes",
+      "image": "/static/images/demo-20.jpg",
+      "note": "Vérifier le format.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Carotte",
+      "code": "D021",
+      "keywords": "carottes; carrot",
+      "category": "Légumes",
+      "image": "/static/images/demo-21.jpg",
+      "note": "Vérifier si vrac ou emballée.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Tomate",
+      "code": "D022",
+      "keywords": "tomates; tomato",
+      "category": "Légumes",
+      "image": "/static/images/demo-22.jpg",
+      "note": "Vérifier la variété.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Poivron rouge",
+      "code": "D023",
+      "keywords": "poivrons rouges; piment doux rouge",
+      "category": "Légumes",
+      "image": "/static/images/demo-23.jpg",
+      "note": "Rouge — photo représentative.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Oignon jaune",
+      "code": "D024",
+      "keywords": "oignons; oignon espagnol",
+      "category": "Légumes",
+      "image": "/static/images/demo-24.jpg",
+      "note": "Photo représentative.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Pomme de terre",
+      "code": "D025",
+      "keywords": "patates; potato; pommes de terre",
+      "category": "Légumes",
+      "image": "/static/images/demo-25.jpg",
+      "note": "Vérifier la variété et le format.",
+      "active": true,
+      "demo": true
+    },
+    {
+      "name": "Courgette",
+      "code": "D026",
+      "keywords": "courgettes; zucchini",
+      "category": "Légumes",
+      "image": "/static/images/demo-26.jpg",
+      "note": "Verte.",
+      "active": true,
+      "demo": true
+    }
+  ],
+  "knowledge": [
+    {
+      "title": "Retour sans facture",
+      "keywords": "remboursement sans facture; retour sans reçu; client pas de facture; rembourser client sans ticket",
+      "answer": "EXEMPLE DEMO — Ce texte ne constitue pas une politique du magasin.\nPour tester l’application : demander l’aide du superviseur avant de poursuivre un retour sans facture.\nLa procédure officielle sera ajoutée par la direction.",
+      "demo": true,
+      "active": true
+    },
+    {
+      "title": "Vendre une carte cadeau",
+      "keywords": "vendre carte cadeau; carte cadeau; activer carte cadeau; activation carte cadeau",
+      "answer": "EXEMPLE DEMO — Aucune étape de vente ou d’activation n’est validée pour ce magasin.\nDemande au superviseur. La direction remplacera ce texte par la procédure officielle.",
+      "demo": true,
+      "active": true
+    },
+    {
+      "title": "Poste de la boulangerie",
+      "keywords": "quel poste boulangerie; numéro boulangerie; joindre boulangerie; téléphone boulangerie",
+      "answer": "EXEMPLE DEMO — Aucun numéro interne réel n’est fourni dans cette démonstration.\nConsulte le répertoire du magasin ou demande au superviseur.",
+      "demo": true,
+      "active": true
+    },
+    {
+      "title": "Débit accepté, erreur à la caisse",
+      "keywords": "paiement débit passé caisse erreur; débit accepté caisse erreur; paiement débit accepté mais caisse erreur; débit passé mais caisse indique erreur",
+      "answer": "EXEMPLE DEMO — La marche à suivre doit être confirmée par la direction.\nDemande au superviseur pour vérifier la transaction. Aucune procédure réelle de correction n’est fournie ici.",
+      "demo": true,
+      "active": true
+    }
+  ]
+}
