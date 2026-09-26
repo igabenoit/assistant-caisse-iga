@@ -14,5 +14,9 @@ with tempfile.TemporaryDirectory() as temp:
     thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
     env={**os.environ,'UI_ADMIN_PASSWORD':'Testing-password-123','UI_BASE_URL':f'http://127.0.0.1:{server.server_port}'}
     try:result=subprocess.run(['node','tests/ui-check.cjs'],cwd=root,env=env)
-    finally:server.shutdown()
+    finally:
+        server.shutdown()
+        thread.join()
+        server.server_close()
+        app.extensions['db'].dispose()
     raise SystemExit(result.returncode)
