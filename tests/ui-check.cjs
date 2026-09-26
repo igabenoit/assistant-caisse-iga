@@ -9,7 +9,10 @@ async function wait(fn,label){for(let i=0;i<100;i++){if(fn())return;await new Pr
 async function page(path,voice=false){
  const jar=new CookieJar();const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));
  const dom=await JSDOM.fromURL(base+path,{resources:'usable',runScripts:'dangerously',pretendToBeVisual:true,cookieJar:jar,virtualConsole:vc,beforeParse(w){
-  w.fetch=async(url,options={})=>{let cookie=await jar.getCookieString(base);const r=await fetch(new URL(url,base),{...options,headers:{...options.headers,...(cookie?{Cookie:cookie}:{})}});for(const c of r.headers.getSetCookie())await jar.setCookie(c,base);return r;};
+  w.fetch=async(url,options={})=>{
+   if(options.body instanceof w.FormData){const body=new FormData();for(const [key,value] of options.body){if(value instanceof w.File){const bytes=await new Promise((resolve,reject)=>{const reader=new w.FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsArrayBuffer(value);});body.append(key,new Blob([bytes],{type:value.type}),value.name);}else body.append(key,value);}options={...options,body};}
+   let cookie=await jar.getCookieString(base);const r=await fetch(new URL(url,base),{...options,headers:{...options.headers,...(cookie?{Cookie:cookie}:{})}});for(const c of r.headers.getSetCookie())await jar.setCookie(c,base);return r;
+  };
   w.AbortController=AbortController;
   w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','')};w.HTMLDialogElement.prototype.close=function(){this.removeAttribute('open')};
   if(voice){Object.defineProperty(w,'isSecureContext',{value:true});w.SpeechRecognition=class {constructor(){w.testSpeech=this}start(){this.onstart?.()}stop(){this.onend?.()}abort(){this.onend?.()}}}
@@ -31,6 +34,31 @@ function submit(dom,id){dom.window.document.querySelector(id).dispatchEvent(new 
  a.querySelector('#add-item').click();set(admin,'#f-name','Produit UI test');set(admin,'#f-code','UI001');set(admin,'#f-keywords','flamboyant');submit(admin,'#edit-form');
  await wait(()=>a.querySelectorAll('[data-edit]').length===27,'creation produit');
  set(cashier,'#query','flamboyant');await wait(()=>d.querySelector('.plu')?.textContent==='UI001','base partagee');
+ const productButton=()=>[...a.querySelectorAll('[data-edit]')].find(b=>b.closest('tr').textContent.includes('UI001'));
+ productButton().click();
+ assert.equal(a.querySelector('#f-keywords').closest('details').open,false);
+ assert.equal(a.querySelector('#f-name').closest('details'),null);
+ const photo=new admin.window.File([fs.readFileSync(root+'/static/images/demo-01.jpg')],'photo.jpg',{type:'image/jpeg'});
+ Object.defineProperty(a.querySelector('#upload-file'),'files',{value:[photo],configurable:true});
+ a.querySelector('#upload-file').dispatchEvent(new admin.window.Event('change'));
+ assert.equal(a.querySelector('#save-item').disabled,true);
+ await wait(()=>a.querySelector('#upload-status').textContent.includes('Photo prête'),'photo ajoutee');
+ const photoPath=a.querySelector('#f-image').value;
+ assert.equal(a.querySelector('#photo-preview').getAttribute('src'),photoPath);
+ set(admin,'#f-name','Produit UI modifié');submit(admin,'#edit-form');
+ await wait(()=>!a.querySelector('#edit-dialog').open,'photo enregistree');
+ await wait(()=>a.querySelector('#list-table').textContent.includes('Produit UI modifié'),'liste modifiee');
+ productButton().click();assert.equal(a.querySelector('#f-image').value,photoPath);
+ const large=new admin.window.File(['x'],'trop-grand.jpg',{type:'image/jpeg'});Object.defineProperty(large,'size',{value:6*1024*1024});
+ Object.defineProperty(a.querySelector('#upload-file'),'files',{value:[large],configurable:true});a.querySelector('#upload-file').dispatchEvent(new admin.window.Event('change'));
+ await wait(()=>a.querySelector('#upload-status').textContent.includes('Photo non ajoutée'),'photo invalide');
+ assert.equal(a.querySelector('#f-image').value,photoPath);
+ a.querySelector('#remove-photo').click();submit(admin,'#edit-form');await wait(()=>!a.querySelector('#edit-dialog').open,'photo retiree');
+ await wait(()=>!productButton().closest('tr').querySelector('img'),'liste sans photo');
+ productButton().click();assert.equal(a.querySelector('#f-image').value,'');
+ a.querySelector('#delete-item').click();assert.equal(a.querySelector('#delete-name').textContent,'Produit UI modifié');
+ a.querySelector('#cancel-delete').click();assert.equal(a.querySelector('#edit-dialog').open,true);
+ a.querySelector('#delete-item').click();a.querySelector('#confirm-delete').click();await wait(()=>a.querySelectorAll('[data-edit]').length===26,'produit retire');
  a.querySelector('[data-tab="knowledge"]').click();await wait(()=>a.querySelectorAll('[data-edit]').length===4,'liste procédures');a.querySelector('#add-item').click();set(admin,'#f-title','Étiquette test');set(admin,'#f-keywords','etiquette test; remplacer etiquette test');set(admin,'#f-answer','Réponse approuvée de test.');submit(admin,'#edit-form');
  await wait(()=>a.querySelectorAll('[data-edit]').length===5,'creation procedure');
  set(cashier,'#query','remplacer etiquette test');await wait(()=>d.querySelector('.answer-text')?.textContent==='Réponse approuvée de test.','lecture procedure');
