@@ -1,10 +1,17 @@
 import csv, io, re, zipfile
 from openpyxl import load_workbook
+from openpyxl.utils.exceptions import InvalidFileException
+from xml.etree.ElementTree import ParseError
 from .search import normalize
 
 COLUMNS={'nom':'name','name':'name','code':'code','plu':'code','synonymes':'keywords','mots cles':'keywords','synonymes mots cles':'keywords','keywords':'keywords','categorie':'category','category':'category','image':'image','photo':'image','precision':'note','note':'note'}
 
 def parse_file(file):
+    try: return _parse_file(file)
+    except (zipfile.BadZipFile,InvalidFileException,ParseError,KeyError,TypeError,csv.Error,UnicodeError) as exc:
+        raise ValueError('Fichier illisible. Enregistre-le de nouveau en CSV ou Excel (.xlsx).') from exc
+
+def _parse_file(file):
     raw=file.read(5*1024*1024+1)
     if len(raw)>5*1024*1024: raise ValueError('Le fichier doit faire moins de 5 Mo.')
     filename=file.filename.lower()
