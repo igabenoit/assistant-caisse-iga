@@ -1,6 +1,7 @@
 {
   "products": [
     {
+      "id": "0e60f131-8909-44c9-9060-fa5d38b52de0",
       "name": "Avocat",
       "code": "D001",
       "keywords": "avocado; avocats",
@@ -8,19 +9,11 @@
       "image": "/static/images/demo-01.jpg",
       "note": "Vérifier le format et la variété.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.400967+00:00"
     },
     {
-      "name": "Banane",
-      "code": "D002",
-      "keywords": "bananes; banana",
-      "category": "Fruits",
-      "image": "/static/images/demo-02.jpg",
-      "note": "Conventionnelle — ne pas confondre avec bio.",
-      "active": true,
-      "demo": true
-    },
-    {
+      "id": "7aa352aa-d60b-4dca-ab41-8739e049e260",
       "name": "Banane bio",
       "code": "D003",
       "keywords": "bananes bio; banane biologique; organic banana",
@@ -28,9 +21,11 @@
       "image": "/static/images/demo-03.jpg",
       "note": "Biologique — photo représentative.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.404982+00:00"
     },
     {
+      "id": "78f61125-1896-44fd-8ac0-650ade1a6822",
       "name": "Pomme Gala",
       "code": "D004",
       "keywords": "pommes gala; gala apple",
@@ -38,9 +33,11 @@
       "image": "/static/images/demo-04.jpg",
       "note": "Gala — photo représentative.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.409066+00:00"
     },
     {
+      "id": "487edf72-d7db-4570-a7a6-16aafb74c8b9",
       "name": "Pomme Granny Smith",
       "code": "D005",
       "keywords": "pommes vertes; granny; pomme verte",
@@ -48,9 +45,11 @@
       "image": "/static/images/demo-05.jpg",
       "note": "Granny Smith, verte.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.412853+00:00"
     },
     {
+      "id": "8e69b518-cbba-4626-b28e-e1396fbfa18e",
       "name": "Pomme Honeycrisp",
       "code": "D006",
       "keywords": "pommes honey crisp; honeycrisp",
@@ -58,9 +57,11 @@
       "image": "/static/images/demo-06.jpg",
       "note": "Honeycrisp — photo représentative.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.431064+00:00"
     },
     {
+      "id": "c72f0a15-32d4-4e71-b40c-27955fb52c1b",
       "name": "Orange",
       "code": "D007",
       "keywords": "oranges; navel",
@@ -68,19 +69,11 @@
       "image": "/static/images/demo-07.jpg",
       "note": "Vérifier le format.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.457066+00:00"
     },
     {
-      "name": "Citron",
-      "code": "D008",
-      "keywords": "citrons; lemon; citron jaune",
-      "category": "Fruits",
-      "image": "/static/images/demo-08.jpg",
-      "note": "Citron jaune.",
-      "active": true,
-      "demo": true
-    },
-    {
+      "id": "fcf85174-6bcc-4f8b-88c3-839390f6b349",
       "name": "Lime",
       "code": "D009",
       "keywords": "limes; citron vert",
@@ -88,9 +81,11 @@
       "image": "/static/images/demo-09.jpg",
       "note": "Citron vert.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.464910+00:00"
     },
     {
+      "id": "5a102de2-aa41-47f9-9477-c79399356a76",
       "name": "Poire Bartlett",
       "code": "D010",
       "keywords": "poires; bartlett",
@@ -98,9 +93,11 @@
       "image": "/static/images/demo-10.jpg",
       "note": "Photo représentative.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.466446+00:00"
     },
     {
+      "id": "aee75c6a-e2ad-447d-944e-59a089bb99e0",
       "name": "Mangue",
       "code": "D011",
       "keywords": "mangues; mango",
@@ -108,9 +105,11 @@
       "image": "/static/images/demo-11.jpg",
       "note": "Vérifier la variété.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.467810+00:00"
     },
     {
+      "id": "220aed04-7d78-4b2f-949a-2588b2e24b09",
       "name": "Ananas",
       "code": "D012",
       "keywords": "pineapple",
@@ -118,9 +117,11 @@
       "image": "/static/images/demo-12.jpg",
       "note": "Entier.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.469046+00:00"
     },
     {
+      "id": "d5fedde2-2bc1-48e8-9920-a0c319217aec",
       "name": "Kiwi",
       "code": "D013",
       "keywords": "kiwis",
@@ -128,9 +129,11 @@
       "image": "/static/images/demo-13.jpg",
       "note": "Vérifier la variété.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.470199+00:00"
     },
     {
+      "id": "f2e1c96e-8ebd-4c85-afa6-0ec3a573fb52",
       "name": "Fraise",
       "code": "D014",
       "keywords": "fraises; strawberry",
@@ -138,9 +141,11 @@
       "image": "/static/images/demo-14.jpg",
       "note": "Vérifier le format de vente.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.471343+00:00"
     },
     {
+      "id": "6ad47b1f-d056-46a7-8b67-444e4864d705",
       "name": "Raisin rouge",
       "code": "D015",
       "keywords": "raisins rouges; raisin",
@@ -148,9 +153,11 @@
       "image": "/static/images/demo-15.jpg",
       "note": "Photo représentative — vérifier la variété.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.472454+00:00"
     },
     {
+      "id": "5cc74802-d29a-4a60-a1df-8db9b2763a43",
       "name": "Coriandre",
       "code": "D016",
       "keywords": "cilantro; coriandres",
@@ -158,9 +165,11 @@
       "image": "/static/images/demo-16.jpg",
       "note": "Ne pas confondre avec le persil.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.473571+00:00"
     },
     {
+      "id": "e18d8f62-7229-4130-ba1f-8cb3470aee6b",
       "name": "Persil",
       "code": "D017",
       "keywords": "persils; parsley",
@@ -168,9 +177,11 @@
       "image": "/static/images/demo-17.jpg",
       "note": "Photo représentative.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.474680+00:00"
     },
     {
+      "id": "59ca428e-15fc-42ad-add7-1fbbd4439258",
       "name": "Gingembre",
       "code": "D018",
       "keywords": "gingembres; ginger",
@@ -178,9 +189,11 @@
       "image": "/static/images/demo-18.jpg",
       "note": "Racine.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.475805+00:00"
     },
     {
+      "id": "38108a1f-bdb6-417d-8dc1-589ddd9d1e24",
       "name": "Concombre",
       "code": "D019",
       "keywords": "concombres; cucumber",
@@ -188,19 +201,11 @@
       "image": "/static/images/demo-19.jpg",
       "note": "Vérifier le format.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.476907+00:00"
     },
     {
-      "name": "Brocoli",
-      "code": "D020",
-      "keywords": "brocolis; broccoli",
-      "category": "Légumes",
-      "image": "/static/images/demo-20.jpg",
-      "note": "Vérifier le format.",
-      "active": true,
-      "demo": true
-    },
-    {
+      "id": "40af72cf-8645-4f33-8aec-e5bba212e5bd",
       "name": "Carotte",
       "code": "D021",
       "keywords": "carottes; carrot",
@@ -208,9 +213,11 @@
       "image": "/static/images/demo-21.jpg",
       "note": "Vérifier si vrac ou emballée.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.479071+00:00"
     },
     {
+      "id": "326c379d-7326-4fbf-93c2-7fd2f1ba11a5",
       "name": "Tomate",
       "code": "D022",
       "keywords": "tomates; tomato",
@@ -218,9 +225,11 @@
       "image": "/static/images/demo-22.jpg",
       "note": "Vérifier la variété.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.480162+00:00"
     },
     {
+      "id": "5fa3de5d-af35-4fc9-a5c5-b3c9a1f4eb87",
       "name": "Poivron rouge",
       "code": "D023",
       "keywords": "poivrons rouges; piment doux rouge",
@@ -228,9 +237,11 @@
       "image": "/static/images/demo-23.jpg",
       "note": "Rouge — photo représentative.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.481292+00:00"
     },
     {
+      "id": "c7abfb37-c973-4ac7-ab83-871ca0edc64e",
       "name": "Oignon jaune",
       "code": "D024",
       "keywords": "oignons; oignon espagnol",
@@ -238,19 +249,11 @@
       "image": "/static/images/demo-24.jpg",
       "note": "Photo représentative.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.482389+00:00"
     },
     {
-      "name": "Pomme de terre",
-      "code": "D025",
-      "keywords": "patates; potato; pommes de terre",
-      "category": "Légumes",
-      "image": "/static/images/demo-25.jpg",
-      "note": "Vérifier la variété et le format.",
-      "active": true,
-      "demo": true
-    },
-    {
+      "id": "f6cd4133-74d6-4031-bfe6-4f3c973cea2c",
       "name": "Courgette",
       "code": "D026",
       "keywords": "courgettes; zucchini",
@@ -258,37 +261,94 @@
       "image": "/static/images/demo-26.jpg",
       "note": "Verte.",
       "active": true,
-      "demo": true
+      "demo": true,
+      "updated_at": "2026-09-26T12:48:02.484582+00:00"
+    },
+    {
+      "id": "ce450cc0-4701-49ea-8c3f-17025b11c3a5",
+      "name": "Pomme de terre",
+      "code": "4083",
+      "keywords": "patates; potato; pommes de terre",
+      "category": "Légumes",
+      "image": "/static/images/demo-25.jpg",
+      "note": "Vérifier la variété et le format.",
+      "active": true,
+      "demo": false,
+      "updated_at": "2026-09-26T23:48:17.541612+00:00"
+    },
+    {
+      "id": "c8330c68-d08e-4aac-a72c-6e5bfef51388",
+      "name": "Brocoli",
+      "code": "4060",
+      "keywords": "brocolis; broccoli",
+      "category": "Légumes",
+      "image": "/static/images/demo-20.jpg",
+      "note": "Vérifier le format.",
+      "active": true,
+      "demo": false,
+      "updated_at": "2026-09-26T23:48:34.545693+00:00"
+    },
+    {
+      "id": "1a818b5b-2844-4fef-bd1b-238e2e97a751",
+      "name": "Banane",
+      "code": "4011",
+      "keywords": "bananes; banana",
+      "category": "Fruits",
+      "image": "/static/images/demo-02.jpg",
+      "note": "Conventionnelle — ne pas confondre avec bio.",
+      "active": true,
+      "demo": false,
+      "updated_at": "2026-09-26T23:50:06.671056+00:00"
+    },
+    {
+      "id": "07f99a6a-34b5-4846-87b4-f92e1149f2c0",
+      "name": "Citron",
+      "code": "D008",
+      "keywords": "citrons; lemon; citron jaune",
+      "category": "Fruits",
+      "image": "/static/images/demo-08.jpg",
+      "note": "Citron jaune.",
+      "active": true,
+      "demo": true,
+      "updated_at": "2026-09-27T00:08:46.740728+00:00"
     }
   ],
   "knowledge": [
     {
+      "id": "d3840b44-7604-405d-b181-e598b244e6a5",
       "title": "Retour sans facture",
       "keywords": "remboursement sans facture; retour sans reçu; client pas de facture; rembourser client sans ticket",
       "answer": "EXEMPLE DEMO — Ce texte ne constitue pas une politique du magasin.\nPour tester l’application : demander l’aide du superviseur avant de poursuivre un retour sans facture.\nLa procédure officielle sera ajoutée par la direction.",
+      "active": true,
       "demo": true,
-      "active": true
+      "updated_at": "2026-09-26T12:48:02.485909+00:00"
     },
     {
+      "id": "1cfa2ecc-5e03-455e-9818-a14c0c622779",
       "title": "Vendre une carte cadeau",
       "keywords": "vendre carte cadeau; carte cadeau; activer carte cadeau; activation carte cadeau",
       "answer": "EXEMPLE DEMO — Aucune étape de vente ou d’activation n’est validée pour ce magasin.\nDemande au superviseur. La direction remplacera ce texte par la procédure officielle.",
+      "active": true,
       "demo": true,
-      "active": true
+      "updated_at": "2026-09-26T12:48:02.487786+00:00"
     },
     {
+      "id": "a150cd71-a66f-4a0d-aca0-c2a17244e69e",
       "title": "Poste de la boulangerie",
       "keywords": "quel poste boulangerie; numéro boulangerie; joindre boulangerie; téléphone boulangerie",
       "answer": "EXEMPLE DEMO — Aucun numéro interne réel n’est fourni dans cette démonstration.\nConsulte le répertoire du magasin ou demande au superviseur.",
+      "active": true,
       "demo": true,
-      "active": true
+      "updated_at": "2026-09-26T12:48:02.490346+00:00"
     },
     {
+      "id": "69ce887c-0e93-4f69-a24d-01b8319760d9",
       "title": "Débit accepté, erreur à la caisse",
       "keywords": "paiement débit passé caisse erreur; débit accepté caisse erreur; paiement débit accepté mais caisse erreur; débit passé mais caisse indique erreur",
       "answer": "EXEMPLE DEMO — La marche à suivre doit être confirmée par la direction.\nDemande au superviseur pour vérifier la transaction. Aucune procédure réelle de correction n’est fournie ici.",
+      "active": true,
       "demo": true,
-      "active": true
+      "updated_at": "2026-09-26T12:48:02.491556+00:00"
     }
   ]
 }

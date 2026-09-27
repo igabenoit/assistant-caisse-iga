@@ -24,6 +24,8 @@ def tokens(s, stop=True):
 
 def sim(a,b,partial=False):
     if a==b: return 1.0
+    # A guessed digit could change a package size or a code.
+    if any(c.isdigit() for c in a+b): return 0
     if partial and len(a)>=3 and b.startswith(a): return 0.94
     if min(len(a),len(b))>=4:
         r=SequenceMatcher(None,a,b).ratio()
@@ -35,13 +37,17 @@ def product_results(query, products):
     if not q: return []
     ranked=[]
     for p in products:
-        if normalize(query)==normalize(p['code']): ranked.append((2,p)); continue
+        if normalize(query)==normalize(p['code']) or q==[normalize(p['code'])]: ranked.append((2,2,p)); continue
         words=tokens(p['name']+' '+p['keywords']+' '+p['category'])
         scores=[max((sim(t,w,True) for w in words),default=0) for t in q]
         # Every meaningful token must match. "banane bio" must not return conventional bananas.
         if min(scores,default=0)>=0.70:
-            ranked.append((sum(scores)/len(scores),p))
-    return [p for _,p in sorted(ranked,key=lambda x:(-x[0],x[1]['name']))][:40]
+            ranked.append((min(scores),sum(scores)/len(scores),p))
+    # Prefer literal/prefix matches as a group. An exact "ananas" must not
+    # also offer "banana" solely because of a fuzzy spelling similarity.
+    if any(minimum>=.94 for minimum,_,_ in ranked):
+        ranked=[r for r in ranked if r[0]>=.94]
+    return [p for _,_,p in sorted(ranked,key=lambda x:(-x[1],x[2]['name']))][:40]
 
 def knowledge_results(query, documents):
     q=tokens(query)

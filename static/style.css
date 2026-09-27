@@ -7,3 +7,20 @@
 /* Espace gérant : photo et champs essentiels visibles immédiatement. */
 #edit-dialog{overflow:hidden}#edit-form{display:flex;flex-direction:column;max-height:calc(90vh - 58px)}#edit-fields{overflow-y:auto;min-height:0;padding:4px}#edit-form>h2,#edit-form>.actions{flex-shrink:0}#edit-form>.actions{padding-top:12px;border-top:1px solid var(--line)}#edit-error:empty{display:none}@media(max-width:540px){#edit-form>.actions{display:flex;gap:8px;flex-wrap:nowrap}#edit-form>.actions button{flex:1;padding:12px 8px;font-size:14px}}
 .photo-editor{display:flex;gap:20px;align-items:center;padding:16px;background:#f3f6f4;border-radius:14px}.photo-preview{width:120px;height:120px;object-fit:contain;border-radius:12px;background:white}.photo-editor>div{min-width:0;flex:1}.edit-options{margin:18px 0;border:1px solid #d5dfd9;border-radius:12px;padding:12px 16px}.edit-options summary{cursor:pointer;font-weight:600;min-height:32px;display:list-item}.edit-options[open] summary{margin-bottom:12px}.photo-editor .file-input{max-width:100%;box-sizing:border-box}@media(max-width:540px){.photo-editor{flex-direction:column;align-items:stretch}.photo-preview{align-self:center}}
+
+/* En caisse, le nom et le code précèdent la photo, même sur un écran court. */
+.grid:not(.single) .product{display:flex;flex-direction:column}
+.product-body{order:-1}
+.product-photo .placeholder{font-size:16px;line-height:1.5;text-align:center;padding:20px}
+@media(max-height:850px){
+ .topbar{min-height:64px;padding-top:10px;padding-bottom:10px}
+ .shell{padding-top:16px}
+ .search-section h1{font-size:30px;margin:6px 0}
+ .search-section .intro{font-size:15px;margin-bottom:14px}
+ .search-wrap input,.mic{min-height:60px}
+ .demo-banner{margin:14px 0;padding:10px 14px}
+ .section-head{margin:16px 0 12px}
+ .product-photo{height:130px}
+ .single .product-photo{min-height:180px}
+}
+.code-label,.eyebrow,.product-photo .placeholder{color:#50665a}

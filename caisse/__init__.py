@@ -55,6 +55,13 @@ def create_app(test_config=None):
 
     def revision(con): return con.execute(select(settings.c.value).where(settings.c.key=='revision')).scalar()
     def changed(con): con.execute(update(settings).where(settings.c.key=='revision').values(value=str(uuid.uuid4())))
+    def lock_revision(con):
+        # All catalogue writers acquire this lock before touching any row.
+        # Imports cannot validate a revision and then overwrite a concurrent edit.
+        if engine.dialect.name=='postgresql':
+            con.execute(select(settings).where(settings.c.key=='revision').with_for_update())
+        elif engine.dialect.name=='sqlite':
+            con.exec_driver_sql('BEGIN IMMEDIATE')
     def role():
         token=session.get('token','')
         if not token: return None
@@ -80,6 +87,7 @@ def create_app(test_config=None):
         if len(v)>maximum or (required and not v): raise ValueError(f'Champ {key} invalide (maximum {maximum} caractères).')
         return v
     def validate(data,table):
+        if not isinstance(data,dict): raise ValueError('Chaque fiche doit être un objet valide.')
         fields={'name':160,'code':32,'keywords':2000,'category':80,'image':2000,'note':500} if table is products else {'title':160,'keywords':4000,'answer':8000}
         required={'name','code'} if table is products else {'title','keywords','answer'}
         out={k:string(data,k,n,k in required) for k,n in fields.items()}
@@ -132,7 +140,7 @@ def create_app(test_config=None):
     @app.get('/healthz')
     def health():
         with engine.connect() as con: con.execute(text('SELECT 1'))
-        return jsonify(status='ok')
+        return jsonify(status='ok',version=os.getenv('RENDER_GIT_COMMIT','local'))
     @app.get('/api/session')
     def session_info(): return jsonify(role=role(),kiosk_required=bool(pin),development=not prod)
     @app.post('/api/login')
@@ -225,7 +233,8 @@ def create_app(test_config=None):
         table={'products':products,'knowledge':knowledge}.get(kind)
         if table is None: abort(404)
         item=validate(body(),table);item['id']=str(uuid.uuid4())
-        with engine.begin() as con: con.execute(insert(table).values(**item));changed(con)
+        with engine.begin() as con:
+            lock_revision(con);con.execute(insert(table).values(**item));changed(con)
         return jsonify(item),201
     @app.put('/api/admin/<kind>/<id>')
     @allowed(admin=True)
@@ -235,6 +244,7 @@ def create_app(test_config=None):
         data=body(); values=validate(data,table)
         expected=string(data,'expected_updated_at',40,True)
         with engine.begin() as con:
+            lock_revision(con)
             count=con.execute(update(table).where(table.c.id==id,table.c.updated_at==expected).values(**values)).rowcount
             if not count: return jsonify(error='Cette fiche a changé ou a été supprimée. Recharge avant de modifier.'),409
             changed(con)
@@ -246,6 +256,7 @@ def create_app(test_config=None):
         if table is None: abort(404)
         data=body(); expected=string(data,'expected_updated_at',40,True)
         with engine.begin() as con:
+            lock_revision(con)
             if not con.execute(delete(table).where(table.c.id==id,table.c.updated_at==expected)).rowcount: return jsonify(error='Fiche modifiée. Recharge la liste.'),409
             changed(con)
         return jsonify(ok=True)
@@ -264,8 +275,10 @@ def create_app(test_config=None):
     def upload():
         f=request.files.get('file')
         if not f: raise ValueError('Choisis une image.')
+        raw=f.read(5*1024*1024+1)
+        if len(raw)>5*1024*1024: raise ValueError('La photo dépasse 5 Mo.')
         try:
-            img=Image.open(f.stream)
+            img=Image.open(io.BytesIO(raw))
             if img.width*img.height>20_000_000: raise ValueError('Image trop grande (maximum 20 mégapixels).')
             from PIL import ImageOps
             img=ImageOps.exif_transpose(img).convert('RGB');img.thumbnail((900,900))
@@ -299,7 +312,7 @@ def create_app(test_config=None):
         if len(set(codes))!=len(codes): raise ValueError('Codes en double dans le fichier.')
         created=updated=skipped=0
         with engine.begin() as con:
-            if engine.dialect.name=='postgresql': con.execute(select(settings).where(settings.c.key=='revision').with_for_update())
+            lock_revision(con)
             if data.get('revision')!=revision(con): return jsonify(error='La base a changé. Relance l’aperçu du fichier avant de confirmer.'),409
             existing={r['code']:dict(r) for r in con.execute(select(products)).mappings()}
             for original,row in zip(rows,validated):
@@ -319,6 +332,8 @@ def create_app(test_config=None):
     def backup():
         import base64
         with engine.connect() as con:
+            if engine.dialect.name=='postgresql': con=con.execution_options(isolation_level='REPEATABLE READ')
+            elif engine.dialect.name=='sqlite': con.exec_driver_sql('BEGIN')
             payload={t.name:[dict(r) for r in con.execute(select(t)).mappings()] for t in [products,knowledge]}
             payload['images']=[{'id':r.id,'mime':r.mime,'data':base64.b64encode(r.data).decode()} for r in con.execute(select(images))]
         payload.update(schema_version=1,exported_at=now())
