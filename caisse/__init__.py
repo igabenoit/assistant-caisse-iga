@@ -52,6 +52,18 @@ def create_app(test_config=None):
             for table,key in [(products,'products'),(knowledge,'knowledge')]:
                 for item in seed[key]: con.execute(insert(table).values(id=str(uuid.uuid4()),updated_at=now(),**item))
             con.execute(update(settings).where(settings.c.key=='seeded').values(value='true'))
+        # Add the verified produce list once, including on databases created before
+        # the list was bundled. Existing admin-managed records always win.
+        catalog_key='produce_catalog_2026_09_27'
+        if not test_config and os.getenv('SEED_DEMO','true').lower()=='true' and not con.execute(select(settings.c.value).where(settings.c.key==catalog_key)).scalar():
+            catalog=json.loads((ROOT/'data'/'produce_catalog.json').read_text(encoding='utf-8'))
+            existing_codes=set(con.execute(select(products.c.code)).scalars())
+            for item in catalog:
+                if item['code'] not in existing_codes:
+                    con.execute(insert(products).values(id=str(uuid.uuid4()),updated_at=now(),active=True,demo=False,**item))
+                    existing_codes.add(item['code'])
+            con.execute(insert(settings).values(key=catalog_key,value='done'))
+            con.execute(update(settings).where(settings.c.key=='revision').values(value=str(uuid.uuid4())))
 
     def revision(con): return con.execute(select(settings.c.value).where(settings.c.key=='revision')).scalar()
     def changed(con): con.execute(update(settings).where(settings.c.key=='revision').values(value=str(uuid.uuid4())))
