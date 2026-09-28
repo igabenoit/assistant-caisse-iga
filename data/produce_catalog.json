@@ -804,7 +804,7 @@
     "code": "4079",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/produce-cauliflower.jpg",
+    "image": "/static/images/produce-cauliflower-v2.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -812,7 +812,7 @@
     "code": "4572",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/produce-cauliflower.jpg",
+    "image": "/static/images/produce-cauliflower-v2.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -820,7 +820,7 @@
     "code": "94079",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/produce-cauliflower.jpg",
+    "image": "/static/images/produce-cauliflower-v2.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1524,7 +1524,7 @@
     "code": "4061",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/produce-iceberg.jpg",
+    "image": "/static/images/produce-iceberg-v2.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1532,7 +1532,7 @@
     "code": "4634",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/produce-iceberg.jpg",
+    "image": "/static/images/produce-iceberg-v2.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1540,7 +1540,7 @@
     "code": "94061",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/produce-iceberg.jpg",
+    "image": "/static/images/produce-iceberg-v2.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1548,7 +1548,7 @@
     "code": "94634",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/produce-iceberg.jpg",
+    "image": "/static/images/produce-iceberg-v2.jpg",
     "note": "Vendu à l’unité."
   },
   {

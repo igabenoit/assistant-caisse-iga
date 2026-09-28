@@ -76,6 +76,16 @@ def create_app(test_config=None):
                     updated+=result.rowcount
             con.execute(insert(settings).values(key=photo_key,value='done'))
             if updated: con.execute(update(settings).where(settings.c.key=='revision').values(value=str(uuid.uuid4())))
+        framing_key='produce_photo_framing_2026_09_28'
+        if not test_config and not con.execute(select(settings.c.value).where(settings.c.key==framing_key)).scalar():
+            updated=0
+            for slug in ('iceberg','cauliflower'):
+                old=f'/static/images/produce-{slug}.jpg'
+                new=f'/static/images/produce-{slug}-v2.jpg'
+                result=con.execute(update(products).where(products.c.image==old,products.c.demo==False).values(image=new,updated_at=now()))
+                updated+=result.rowcount
+            con.execute(insert(settings).values(key=framing_key,value='done'))
+            if updated: con.execute(update(settings).where(settings.c.key=='revision').values(value=str(uuid.uuid4())))
 
     def revision(con): return con.execute(select(settings.c.value).where(settings.c.key=='revision')).scalar()
     def changed(con): con.execute(update(settings).where(settings.c.key=='revision').values(value=str(uuid.uuid4())))
