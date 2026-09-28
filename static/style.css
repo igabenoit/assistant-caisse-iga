@@ -24,3 +24,6 @@
  .single .product-photo{min-height:180px}
 }
 .code-label,.eyebrow,.product-photo .placeholder{color:#50665a}
+/* Les photos portrait de ces deux produits doivent remplir la vignette de caisse. */
+.product-photo img[src*="produce-iceberg-v2.jpg"],
+.product-photo img[src*="produce-cauliflower-v2.jpg"]{object-fit:cover;padding:0;mix-blend-mode:normal}
