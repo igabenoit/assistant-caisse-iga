@@ -64,6 +64,18 @@ def create_app(test_config=None):
                     existing_codes.add(item['code'])
             con.execute(insert(settings).values(key=catalog_key,value='done'))
             con.execute(update(settings).where(settings.c.key=='revision').values(value=str(uuid.uuid4())))
+        # Later photo additions apply to already imported PLUs without replacing
+        # images uploaded or assigned by an administrator.
+        photo_key='produce_photos_2026_09_28'
+        if not test_config and os.getenv('SEED_DEMO','true').lower()=='true' and not con.execute(select(settings.c.value).where(settings.c.key==photo_key)).scalar():
+            catalog=json.loads((ROOT/'data'/'produce_catalog.json').read_text(encoding='utf-8'))
+            updated=0
+            for item in catalog:
+                if item['image']:
+                    result=con.execute(update(products).where(products.c.code==item['code'],products.c.image=='',products.c.demo==False).values(image=item['image'],updated_at=now()))
+                    updated+=result.rowcount
+            con.execute(insert(settings).values(key=photo_key,value='done'))
+            if updated: con.execute(update(settings).where(settings.c.key=='revision').values(value=str(uuid.uuid4())))
 
     def revision(con): return con.execute(select(settings.c.value).where(settings.c.key=='revision')).scalar()
     def changed(con): con.execute(update(settings).where(settings.c.key=='revision').values(value=str(uuid.uuid4())))
