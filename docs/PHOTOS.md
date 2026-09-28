@@ -28,3 +28,15 @@ Photos Wikimedia Commons téléchargées une fois pour la démonstration. Images
 - **Oignon jaune** — Colin. CC BY-SA 3.0. [Fichier original et attribution](https://commons.wikimedia.org/wiki/File:Mixed_onions.jpg).
 - **Pomme de terre** — Scott Bauer, USDA ARS. Public domain. [Fichier original et attribution](https://commons.wikimedia.org/wiki/File:Patates.jpg).
 - **Courgette** — Evan-Amos. Public domain. [Fichier original et attribution](https://commons.wikimedia.org/wiki/File:CSA-Striped-Zucchini.jpg).
+
+## Lot fruits et légumes — 28 septembre 2026
+
+Photos Wikimedia Commons redimensionnées et réencodées en JPEG; chaque photo est représentative et ne certifie ni la variété précise ni le format vendu.
+
+- **Laitue iceberg** — Rasbak. CC BY-SA 3.0. [Fichier original](https://commons.wikimedia.org/wiki/File:Iceberg_lettuce_(IJssla_krop).jpg).
+- **Laitue romaine** — Rainer Zenz. CC BY-SA 3.0. [Fichier original](https://commons.wikimedia.org/wiki/File:Romaine_lettuce.jpg).
+- **Chou-fleur** — CC BY-SA 3.0; voir l’attribution du [fichier original](https://commons.wikimedia.org/wiki/File:Cauliflower.jpg).
+- **Oignon rouge** — Anja. CC BY-SA 4.0. [Fichier original](https://commons.wikimedia.org/wiki/File:Three_whole_red_onions.jpg).
+- **Ail** — Ivar Leidus. CC BY-SA 4.0. [Fichier original](https://commons.wikimedia.org/wiki/File:Garlic_bulbs_and_cloves.jpg).
+- **Melon d’eau** — Harsha K R. CC BY-SA 2.0. [Fichier original](https://commons.wikimedia.org/wiki/File:Sliced_Watermelon.jpg).
+- **Cantaloup** — fir0002. GFDL 1.2. [Fichier original](https://commons.wikimedia.org/wiki/File:Canteloupe_and_cross_section.jpg).
