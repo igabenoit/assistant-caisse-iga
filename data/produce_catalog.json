@@ -108,7 +108,7 @@
     "code": "4080",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-asperge-verte.jpg",
     "note": ""
   },
   {
@@ -116,7 +116,7 @@
     "code": "94080",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-asperge-verte.jpg",
     "note": ""
   },
   {
@@ -140,7 +140,7 @@
     "code": "4081",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-aubergine-italienne.jpg",
     "note": ""
   },
   {
@@ -148,7 +148,7 @@
     "code": "4880",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-aubergine-italienne.jpg",
     "note": ""
   },
   {
@@ -156,7 +156,7 @@
     "code": "94081",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-aubergine-italienne.jpg",
     "note": ""
   },
   {
@@ -188,7 +188,7 @@
     "code": "4599",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-aubergine-italienne.jpg",
     "note": ""
   },
   {
@@ -500,7 +500,7 @@
     "code": "4070",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-celeri.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -508,7 +508,7 @@
     "code": "4582",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-celeri.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -516,7 +516,7 @@
     "code": "94070",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-celeri.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -524,7 +524,7 @@
     "code": "94582",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-celeri.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -572,7 +572,7 @@
     "code": "4085",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-champignon-blanc.jpg",
     "note": ""
   },
   {
@@ -580,7 +580,7 @@
     "code": "94085",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-champignon-blanc.jpg",
     "note": ""
   },
   {
@@ -588,7 +588,7 @@
     "code": "4648",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-champignon-cafe.jpg",
     "note": ""
   },
   {
@@ -628,7 +628,7 @@
     "code": "4650",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-champignon-portobello.jpg",
     "note": ""
   },
   {
@@ -636,7 +636,7 @@
     "code": "94650",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-champignon-portobello.jpg",
     "note": ""
   },
   {
@@ -668,7 +668,7 @@
     "code": "4552",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-chou-napa.jpg",
     "note": ""
   },
   {
@@ -756,7 +756,7 @@
     "code": "4554",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-chou-rouge.jpg",
     "note": ""
   },
   {
@@ -764,7 +764,7 @@
     "code": "94554",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-chou-rouge.jpg",
     "note": ""
   },
   {
@@ -788,7 +788,7 @@
     "code": "3397",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-chou-vert.jpg",
     "note": ""
   },
   {
@@ -796,7 +796,7 @@
     "code": "4069",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-chou-vert.jpg",
     "note": ""
   },
   {
@@ -844,7 +844,7 @@
     "code": "4550",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-choux-bruxelles.jpg",
     "note": ""
   },
   {
@@ -852,7 +852,7 @@
     "code": "93083",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-choux-bruxelles.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1612,7 +1612,7 @@
     "code": "94590",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-mais-epis.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -2788,7 +2788,7 @@
     "code": "4629",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-poireaux.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -2796,7 +2796,7 @@
     "code": "94629",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave2-poireaux.jpg",
     "note": "Vendu à l’unité."
   },
   {
