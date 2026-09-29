@@ -36,7 +36,7 @@
     "code": "4430",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-12.jpg",
+    "image": "/static/images/catalog/d012-ananas.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -44,7 +44,7 @@
     "code": "4432",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-12.jpg",
+    "image": "/static/images/catalog/d012-ananas.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -52,7 +52,7 @@
     "code": "4433",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-12.jpg",
+    "image": "/static/images/catalog/d012-ananas.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -60,7 +60,7 @@
     "code": "94029",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-12.jpg",
+    "image": "/static/images/catalog/d012-ananas.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -68,7 +68,7 @@
     "code": "94430",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-12.jpg",
+    "image": "/static/images/catalog/d012-ananas.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -76,7 +76,7 @@
     "code": "4029",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-12.jpg",
+    "image": "/static/images/catalog/d012-ananas.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -196,7 +196,7 @@
     "code": "4224",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-01.jpg",
+    "image": "/static/images/catalog/d001-avocat-hass.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -204,7 +204,7 @@
     "code": "94046",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-01.jpg",
+    "image": "/static/images/catalog/d001-avocat-hass.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -212,7 +212,7 @@
     "code": "94224",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-01.jpg",
+    "image": "/static/images/catalog/d001-avocat-hass.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -220,7 +220,7 @@
     "code": "94225",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-01.jpg",
+    "image": "/static/images/catalog/d001-avocat-hass.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -228,7 +228,7 @@
     "code": "4225",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-01.jpg",
+    "image": "/static/images/catalog/d001-avocat-hass.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -236,7 +236,7 @@
     "code": "94222",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-01.jpg",
+    "image": "/static/images/catalog/d001-avocat-hass.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -244,7 +244,7 @@
     "code": "4011",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-02.jpg",
+    "image": "/static/images/catalog/4011-banane.jpg",
     "note": ""
   },
   {
@@ -252,7 +252,7 @@
     "code": "94011",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-03.jpg",
+    "image": "/static/images/catalog/d003-banane-bio.jpg",
     "note": ""
   },
   {
@@ -372,7 +372,7 @@
     "code": "4060",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-20.jpg",
+    "image": "/static/images/catalog/4060-brocoli.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -380,7 +380,7 @@
     "code": "94060",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-20.jpg",
+    "image": "/static/images/catalog/4060-brocoli.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -388,7 +388,7 @@
     "code": "4549",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-20.jpg",
+    "image": "/static/images/catalog/4060-brocoli.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -492,7 +492,7 @@
     "code": "4562",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/d021-carotte.jpg",
     "note": ""
   },
   {
@@ -884,7 +884,7 @@
     "code": "4053",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-08.jpg",
+    "image": "/static/images/catalog/d008-citron.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -892,7 +892,7 @@
     "code": "94053",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-08.jpg",
+    "image": "/static/images/catalog/d008-citron.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -900,7 +900,7 @@
     "code": "4048",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/d009-lime.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -948,7 +948,7 @@
     "code": "4593",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/d019-concombre-anglais.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -956,7 +956,7 @@
     "code": "94593",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/d019-concombre-anglais.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1004,7 +1004,7 @@
     "code": "4889",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-16.jpg",
+    "image": "/static/images/catalog/d016-coriandre.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1012,7 +1012,7 @@
     "code": "94889",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-16.jpg",
+    "image": "/static/images/catalog/d016-coriandre.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1180,7 +1180,7 @@
     "code": "3082",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-20.jpg",
+    "image": "/static/images/catalog/4060-brocoli.jpg",
     "note": ""
   },
   {
@@ -1324,7 +1324,7 @@
     "code": "4612",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-18.jpg",
+    "image": "/static/images/catalog/d018-gingembre.jpg",
     "note": ""
   },
   {
@@ -1332,7 +1332,7 @@
     "code": "94612",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-18.jpg",
+    "image": "/static/images/catalog/d018-gingembre.jpg",
     "note": ""
   },
   {
@@ -1668,7 +1668,7 @@
     "code": "94959",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-11.jpg",
+    "image": "/static/images/catalog/d011-mangue.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1692,7 +1692,7 @@
     "code": "4959",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-11.jpg",
+    "image": "/static/images/catalog/d011-mangue.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1948,7 +1948,7 @@
     "code": "4848",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/d024-oignon-jaune.jpg",
     "note": ""
   },
   {
@@ -1956,7 +1956,7 @@
     "code": "4093",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/d024-oignon-jaune.jpg",
     "note": ""
   },
   {
@@ -2020,7 +2020,7 @@
     "code": "3107",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-07.jpg",
+    "image": "/static/images/catalog/d007-orange-navel.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -2028,7 +2028,7 @@
     "code": "4012",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-07.jpg",
+    "image": "/static/images/catalog/d007-orange-navel.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -2036,7 +2036,7 @@
     "code": "94012",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-07.jpg",
+    "image": "/static/images/catalog/d007-orange-navel.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -2044,7 +2044,7 @@
     "code": "93107",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-07.jpg",
+    "image": "/static/images/catalog/d007-orange-navel.jpg",
     "note": ""
   },
   {
@@ -2052,7 +2052,7 @@
     "code": "4013",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-07.jpg",
+    "image": "/static/images/catalog/d007-orange-navel.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -2060,7 +2060,7 @@
     "code": "94013",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-07.jpg",
+    "image": "/static/images/catalog/d007-orange-navel.jpg",
     "note": ""
   },
   {
@@ -2308,7 +2308,7 @@
     "code": "3263",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/4083-pomme-de-terre-russet.jpg",
     "note": ""
   },
   {
@@ -2412,7 +2412,7 @@
     "code": "4901",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-17.jpg",
+    "image": "/static/images/catalog/d017-persil.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -2420,7 +2420,7 @@
     "code": "94901",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-17.jpg",
+    "image": "/static/images/catalog/d017-persil.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -2628,7 +2628,7 @@
     "code": "4409",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-10.jpg",
+    "image": "/static/images/catalog/d010-poire-bartlett.jpg",
     "note": ""
   },
   {
@@ -2636,7 +2636,7 @@
     "code": "94409",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-10.jpg",
+    "image": "/static/images/catalog/d010-poire-bartlett.jpg",
     "note": ""
   },
   {
@@ -2644,7 +2644,7 @@
     "code": "4024",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-10.jpg",
+    "image": "/static/images/catalog/d010-poire-bartlett.jpg",
     "note": ""
   },
   {
@@ -2652,7 +2652,7 @@
     "code": "94024",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-10.jpg",
+    "image": "/static/images/catalog/d010-poire-bartlett.jpg",
     "note": ""
   },
   {
@@ -2908,7 +2908,7 @@
     "code": "4088",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-23.jpg",
+    "image": "/static/images/catalog/d023-poivron-rouge.jpg",
     "note": ""
   },
   {
@@ -2916,7 +2916,7 @@
     "code": "94088",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-23.jpg",
+    "image": "/static/images/catalog/d023-poivron-rouge.jpg",
     "note": ""
   },
   {
@@ -2924,7 +2924,7 @@
     "code": "4688",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-23.jpg",
+    "image": "/static/images/catalog/d023-poivron-rouge.jpg",
     "note": ""
   },
   {
@@ -2932,7 +2932,7 @@
     "code": "8767",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-23.jpg",
+    "image": "/static/images/catalog/d023-poivron-rouge.jpg",
     "note": ""
   },
   {
@@ -2940,7 +2940,7 @@
     "code": "94688",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-23.jpg",
+    "image": "/static/images/catalog/d023-poivron-rouge.jpg",
     "note": ""
   },
   {
@@ -3228,7 +3228,7 @@
     "code": "4135",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-04.jpg",
+    "image": "/static/images/catalog/d004-pomme-gala.jpg",
     "note": ""
   },
   {
@@ -3236,7 +3236,7 @@
     "code": "4134",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-04.jpg",
+    "image": "/static/images/catalog/d004-pomme-gala.jpg",
     "note": ""
   },
   {
@@ -3244,7 +3244,7 @@
     "code": "4132",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-04.jpg",
+    "image": "/static/images/catalog/d004-pomme-gala.jpg",
     "note": ""
   },
   {
@@ -3252,7 +3252,7 @@
     "code": "4133",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-04.jpg",
+    "image": "/static/images/catalog/d004-pomme-gala.jpg",
     "note": ""
   },
   {
@@ -3348,7 +3348,7 @@
     "code": "93283",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/d006-pomme-honeycrisp.jpg",
     "note": ""
   },
   {
@@ -3356,7 +3356,7 @@
     "code": "3283",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-06.jpg",
+    "image": "/static/images/catalog/d006-pomme-honeycrisp.jpg",
     "note": ""
   },
   {
@@ -3364,7 +3364,7 @@
     "code": "3468",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-06.jpg",
+    "image": "/static/images/catalog/d006-pomme-honeycrisp.jpg",
     "note": ""
   },
   {
@@ -3876,7 +3876,7 @@
     "code": "3450",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-15.jpg",
+    "image": "/static/images/catalog/d015-raisin-rouge.jpg",
     "note": ""
   },
   {
@@ -3884,7 +3884,7 @@
     "code": "3492",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-15.jpg",
+    "image": "/static/images/catalog/d015-raisin-rouge.jpg",
     "note": ""
   },
   {
@@ -3892,7 +3892,7 @@
     "code": "3496",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-15.jpg",
+    "image": "/static/images/catalog/d015-raisin-rouge.jpg",
     "note": ""
   },
   {
@@ -3900,7 +3900,7 @@
     "code": "4023",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-15.jpg",
+    "image": "/static/images/catalog/d015-raisin-rouge.jpg",
     "note": ""
   },
   {
@@ -3908,7 +3908,7 @@
     "code": "4499",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-15.jpg",
+    "image": "/static/images/catalog/d015-raisin-rouge.jpg",
     "note": ""
   },
   {
@@ -3916,7 +3916,7 @@
     "code": "4635",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-15.jpg",
+    "image": "/static/images/catalog/d015-raisin-rouge.jpg",
     "note": ""
   },
   {
@@ -3924,7 +3924,7 @@
     "code": "94023",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-15.jpg",
+    "image": "/static/images/catalog/d015-raisin-rouge.jpg",
     "note": ""
   },
   {
@@ -3932,7 +3932,7 @@
     "code": "94499",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-15.jpg",
+    "image": "/static/images/catalog/d015-raisin-rouge.jpg",
     "note": ""
   },
   {
@@ -3940,7 +3940,7 @@
     "code": "94635",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-15.jpg",
+    "image": "/static/images/catalog/d015-raisin-rouge.jpg",
     "note": ""
   },
   {
@@ -4180,7 +4180,7 @@
     "code": "4064",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/d022-tomate.jpg",
     "note": ""
   },
   {
@@ -4252,7 +4252,7 @@
     "code": "3170",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-22.jpg",
+    "image": "/static/images/catalog/d022-tomate.jpg",
     "note": ""
   },
   {
@@ -4260,7 +4260,7 @@
     "code": "4800",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-22.jpg",
+    "image": "/static/images/catalog/d022-tomate.jpg",
     "note": ""
   },
   {
@@ -4284,7 +4284,7 @@
     "code": "4063",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-22.jpg",
+    "image": "/static/images/catalog/d022-tomate.jpg",
     "note": ""
   },
   {
@@ -4292,7 +4292,7 @@
     "code": "4853",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-22.jpg",
+    "image": "/static/images/catalog/d022-tomate.jpg",
     "note": ""
   },
   {
@@ -4388,7 +4388,7 @@
     "code": "4067",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/d026-courgette.jpg",
     "note": ""
   },
   {
@@ -4420,7 +4420,7 @@
     "code": "94067",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/d026-courgette.jpg",
     "note": ""
   },
   {
@@ -4440,3 +4440,4 @@
     "note": "Vendu à l’unité."
   }
 ]
+

@@ -29,11 +29,22 @@ def search(c,q,record=False,**more):return c.post('/api/search',headers=H,json={
 def test_demo_seed_and_no_reseed(app,client):
     assert len(client.get('/api/catalog').json['products'])==26
     assert client.get('/api/catalog').json['demo_count']==26
+    assert all('/static/images/catalog/' in p['image'] for p in client.get('/api/catalog').json['products'])
     login(client)
     row=client.get('/api/admin/products').json['items'][0]
     assert client.delete('/api/admin/products/'+row['id'],headers=H,json={'expected_updated_at':row['updated_at']}).status_code==200
     second=create_app({'TESTING':True,'DATABASE_URL':str(app.extensions['db'].url)})
     assert second.test_client().get('/api/catalog').json['total']==25
+
+def test_catalogue_photo_upgrade_preserves_manager_photo(app,client):
+    login(client)
+    row=next(p for p in client.get('/api/admin/products').json['items'] if p['code']=='D001')
+    custom='/api/images/00000000-0000-0000-0000-000000000001'
+    payload={**row,'image':custom,'expected_updated_at':row['updated_at']}
+    assert client.put('/api/admin/products/'+row['id'],headers=H,json=payload).status_code==200
+    second=create_app({'TESTING':True,'DATABASE_URL':str(app.extensions['db'].url)})
+    again=next(p for p in second.test_client().get('/api/catalog').json['products'] if p['code']=='D001')
+    assert again['image']==custom
 
 @pytest.mark.parametrize('query,expected',[('avocat','Avocat'),('avoca','Avocat'),('avocatt','Avocat'),('cilantro','Coriandre'),('coriandré','Coriandre'),('c’est quoi le code du gingembre?','Gingembre'),('D001','Avocat'),('banane biologique','Banane bio')])
 def test_products(client,query,expected):
@@ -170,3 +181,4 @@ def test_live_update_stream(app,client):
     assert b'data: ' in change and rev.encode() not in change
     assert search(tablet,'synchronise').json['products'][0]['code']=='SYNC01'
     response.close()
+
