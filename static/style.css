@@ -24,6 +24,11 @@
  .single .product-photo{min-height:180px}
 }
 .code-label,.eyebrow,.product-photo .placeholder{color:#50665a}
-/* Les photos portrait de ces deux produits doivent remplir la vignette de caisse. */
+/* Une vignette carrée stable évite que le cadrage change selon la tablette,
+   l'orientation ou le nombre de résultats. */
+.product-photo{height:auto;aspect-ratio:1/1;background:#fff;overflow:hidden}
+.product-photo img,
 .product-photo img[src*="produce-iceberg-v2.jpg"],
-.product-photo img[src*="produce-cauliflower-v2.jpg"]{object-fit:cover;padding:0;mix-blend-mode:normal}
+.product-photo img[src*="produce-cauliflower-v2.jpg"]{display:block;width:100%;height:100%;object-fit:contain;object-position:50% 50%;padding:0;margin:auto;mix-blend-mode:normal}
+.single .product-photo{height:auto;min-height:0;aspect-ratio:1/1;align-self:center;width:100%}
+
