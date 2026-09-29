@@ -38,7 +38,7 @@ function pendingResult(){ $('#results-title').textContent='Recherche en cours…
 function finishResult(){ $('#results').setAttribute('aria-busy','false'); }
 async function home(){
  const n=++requestNumber;controller?.abort();controller=new AbortController();pendingResult();
- try{const data=await api('/api/catalog',{signal:controller.signal});if(n!==requestNumber||$('#query').value.trim())return;revision=data.revision;currentProducts=data.products;$('#demo-banner').classList.toggle('hidden',data.demo_count===0);renderProducts(currentProducts.slice(0,9),true);showConnection();}catch(e){if(n===requestNumber&&e.name!=='AbortError'){showConnection('Connexion indisponible. Les codes à jour ne peuvent pas être affichés.');$('#results').innerHTML='<div class="empty"><h3>Catalogue indisponible</h3><button class="secondary" data-retry>Réessayer</button></div>';}}finally{if(n===requestNumber)finishResult();}
+ try{const data=await api('/api/catalog',{signal:controller.signal});if(n!==requestNumber||$('#query').value.trim())return;revision=data.revision;currentProducts=data.products;renderProducts(currentProducts.slice(0,9),true);showConnection();}catch(e){if(n===requestNumber&&e.name!=='AbortError'){showConnection('Connexion indisponible. Les codes à jour ne peuvent pas être affichés.');$('#results').innerHTML='<div class="empty"><h3>Catalogue indisponible</h3><button class="secondary" data-retry>Réessayer</button></div>';}}finally{if(n===requestNumber)finishResult();}
 }
 async function search(record=false){
  const query=$('#query').value.trim();
