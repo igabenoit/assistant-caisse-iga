@@ -1,0 +1,65 @@
+[
+  {
+    "old_image": "/static/images/produce-garlic.jpg",
+    "new_image": "/static/images/catalog/final-corrected-ail.jpg",
+    "codes": [
+      "4608"
+    ]
+  },
+  {
+    "old_image": "/static/images/produce-cantaloupe.jpg",
+    "new_image": "/static/images/catalog/final-corrected-cantaloup.jpg",
+    "codes": [
+      "4050"
+    ]
+  },
+  {
+    "old_image": "/static/images/produce-cauliflower-v2.jpg",
+    "new_image": "/static/images/catalog/final-corrected-chou-fleur.jpg",
+    "codes": [
+      "4079"
+    ]
+  },
+  {
+    "old_image": "/static/images/produce-iceberg-v2.jpg",
+    "new_image": "/static/images/catalog/final-corrected-laitue-iceberg.jpg",
+    "codes": [
+      "4061"
+    ]
+  },
+  {
+    "old_image": "/static/images/produce-romaine.jpg",
+    "new_image": "/static/images/catalog/final-corrected-laitue-romaine.jpg",
+    "codes": [
+      "4640"
+    ]
+  },
+  {
+    "old_image": "/static/images/produce-watermelon.jpg",
+    "new_image": "/static/images/catalog/final-corrected-melon-eau.jpg",
+    "codes": [
+      "4032"
+    ]
+  },
+  {
+    "old_image": "/static/images/demo-17.jpg",
+    "new_image": "/static/images/catalog/final-corrected-persil-bio.jpg",
+    "codes": [
+      "94899"
+    ]
+  },
+  {
+    "old_image": "/static/images/demo-19.jpg",
+    "new_image": "/static/images/catalog/final-corrected-concombre-champs.jpg",
+    "codes": [
+      "4062"
+    ]
+  },
+  {
+    "old_image": "/static/images/demo-04.jpg",
+    "new_image": "/static/images/catalog/final-corrected-pomme-royal-gala.jpg",
+    "codes": [
+      "4173"
+    ]
+  }
+]

@@ -28,7 +28,7 @@
     "code": "4608",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/produce-garlic.jpg",
+    "image": "/static/images/catalog/final-corrected-ail.jpg",
     "note": ""
   },
   {
@@ -436,7 +436,7 @@
     "code": "4050",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/produce-cantaloupe.jpg",
+    "image": "/static/images/catalog/final-corrected-cantaloup.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -804,7 +804,7 @@
     "code": "4079",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/produce-cauliflower-v2.jpg",
+    "image": "/static/images/catalog/final-corrected-chou-fleur.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -972,7 +972,7 @@
     "code": "4062",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-19.jpg",
+    "image": "/static/images/catalog/final-corrected-concombre-champs.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1524,7 +1524,7 @@
     "code": "4061",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/produce-iceberg-v2.jpg",
+    "image": "/static/images/catalog/final-corrected-laitue-iceberg.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1556,7 +1556,7 @@
     "code": "4640",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/produce-romaine.jpg",
+    "image": "/static/images/catalog/final-corrected-laitue-romaine.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1732,7 +1732,7 @@
     "code": "4032",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/produce-watermelon.jpg",
+    "image": "/static/images/catalog/final-corrected-melon-eau.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -2380,7 +2380,7 @@
     "code": "94899",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-17.jpg",
+    "image": "/static/images/catalog/final-corrected-persil-bio.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -3516,7 +3516,7 @@
     "code": "4173",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "/static/images/demo-04.jpg",
+    "image": "/static/images/catalog/final-corrected-pomme-royal-gala.jpg",
     "note": ""
   },
   {
