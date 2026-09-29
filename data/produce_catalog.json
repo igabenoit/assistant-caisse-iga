@@ -4,7 +4,7 @@
     "code": "3302",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-abricot.jpg",
     "note": ""
   },
   {
@@ -12,7 +12,7 @@
     "code": "4218",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-abricot.jpg",
     "note": ""
   },
   {
@@ -20,7 +20,7 @@
     "code": "93302",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-abricot.jpg",
     "note": ""
   },
   {
@@ -268,7 +268,7 @@
     "code": "4235",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-banane-plantain.jpg",
     "note": ""
   },
   {
@@ -316,7 +316,7 @@
     "code": "4539",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-betterave-feuilles.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -340,7 +340,7 @@
     "code": "94540",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-betterave-feuilles.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -348,7 +348,7 @@
     "code": "4545",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-bok-choy.jpg",
     "note": ""
   },
   {
@@ -556,7 +556,7 @@
     "code": "4045",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-cerise-rouge.jpg",
     "note": ""
   },
   {
@@ -564,7 +564,7 @@
     "code": "94045",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-cerise-rouge.jpg",
     "note": ""
   },
   {
@@ -924,7 +924,7 @@
     "code": "3386",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-clementine.jpg",
     "note": ""
   },
   {
@@ -932,7 +932,7 @@
     "code": "4450",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-clementine.jpg",
     "note": ""
   },
   {
@@ -996,7 +996,7 @@
     "code": "4999",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-concombre-libanais.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1036,7 +1036,7 @@
     "code": "4759",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-courge-butternut.jpg",
     "note": ""
   },
   {
@@ -1044,7 +1044,7 @@
     "code": "94759",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-courge-butternut.jpg",
     "note": ""
   },
   {
@@ -1364,7 +1364,7 @@
     "code": "4533",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-haricot-jaune.jpg",
     "note": ""
   },
   {
@@ -1372,7 +1372,7 @@
     "code": "94533",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-haricot-jaune.jpg",
     "note": ""
   },
   {
@@ -1420,7 +1420,7 @@
     "code": "3729",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-kiwi-dore.jpg",
     "note": ""
   },
   {
@@ -1428,7 +1428,7 @@
     "code": "4030",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-kiwi-dore.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1508,7 +1508,7 @@
     "code": "4076",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-laitue-feuille-verte.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1516,7 +1516,7 @@
     "code": "94076",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-laitue-feuille-verte.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1652,7 +1652,7 @@
     "code": "4312",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-mangue-ataulfo.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1660,7 +1660,7 @@
     "code": "94312",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave3-mangue-ataulfo.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -4440,4 +4440,3 @@
     "note": "Vendu à l’unité."
   }
 ]
-

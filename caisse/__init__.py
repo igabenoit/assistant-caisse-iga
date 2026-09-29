@@ -112,6 +112,18 @@ def create_app(test_config=None):
                 updated+=result.rowcount
             con.execute(insert(settings).values(key=catalogue_photo_key_2,value='done'))
             if updated: con.execute(update(settings).where(settings.c.key=='revision').values(value=str(uuid.uuid4())))
+        catalogue_photo_key_3='catalogue_photos_2026_09_29_b'
+        if not con.execute(select(settings.c.value).where(settings.c.key==catalogue_photo_key_3)).scalar():
+            photo_map=json.loads((ROOT/'data'/'catalog_photo_batch_2026_09_29_b.json').read_text(encoding='utf-8'))
+            updated=0
+            for image,codes in photo_map.items():
+                result=con.execute(update(products).where(
+                    products.c.code.in_(codes),
+                    products.c.image==''
+                ).values(image=image,updated_at=now()))
+                updated+=result.rowcount
+            con.execute(insert(settings).values(key=catalogue_photo_key_3,value='done'))
+            if updated: con.execute(update(settings).where(settings.c.key=='revision').values(value=str(uuid.uuid4())))
 
     def revision(con): return con.execute(select(settings.c.value).where(settings.c.key=='revision')).scalar()
     def changed(con): con.execute(update(settings).where(settings.c.key=='revision').values(value=str(uuid.uuid4())))
@@ -399,4 +411,3 @@ def create_app(test_config=None):
         payload.update(schema_version=1,exported_at=now())
         return Response(json.dumps(payload,ensure_ascii=False),mimetype='application/json',headers={'Content-Disposition':'attachment; filename=assistant-caisse-sauvegarde.json'})
     return app
-
