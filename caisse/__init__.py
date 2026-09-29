@@ -10,7 +10,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
 from PIL import Image, UnidentifiedImageError
 from .models import metadata, products, knowledge, logs, settings, sessions, attempts, images, now
-from .search import resolve, UNKNOWN
+from .search import resolve, UNKNOWN, normalize
 from .importer import parse_file
 
 ROOT=Path(__file__).resolve().parent.parent
@@ -328,7 +328,8 @@ def create_app(test_config=None):
     @allowed()
     def catalog():
         with engine.connect() as con:
-            rows=[dict(x) for x in con.execute(select(products).where(products.c.active==True).order_by(products.c.name)).mappings()]
+            rows=[dict(x) for x in con.execute(select(products).where(products.c.active==True)).mappings()]
+            rows.sort(key=lambda row:(normalize(row['name']),row['code']))
             demo_count=sum(p['demo'] for p in rows)
             return jsonify(products=rows[:40],total=len(rows),demo_count=demo_count,revision=revision(con))
     @app.get('/api/knowledge/<id>')
@@ -361,7 +362,11 @@ def create_app(test_config=None):
     def listing(kind):
         table={'products':products,'knowledge':knowledge}.get(kind)
         if table is None: abort(404)
-        with engine.connect() as con: return jsonify(items=[dict(x) for x in con.execute(select(table).order_by(table.c.updated_at.desc())).mappings()])
+        with engine.connect() as con:
+            items=[dict(x) for x in con.execute(select(table)).mappings()]
+        if table is products: items.sort(key=lambda item:(normalize(item['name']),item['code']))
+        else: items.sort(key=lambda item:item['updated_at'],reverse=True)
+        return jsonify(items=items)
     @app.post('/api/admin/<kind>')
     @allowed(admin=True)
     def create(kind):

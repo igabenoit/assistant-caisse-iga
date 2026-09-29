@@ -5,6 +5,7 @@ from openpyxl import Workbook
 from sqlalchemy import select, create_engine
 from caisse import create_app
 from caisse.models import products, metadata
+from caisse.search import normalize
 
 H={'X-App-Request':'1'}
 @pytest.fixture
@@ -45,6 +46,17 @@ def test_catalogue_photo_upgrade_preserves_manager_photo(app,client):
     second=create_app({'TESTING':True,'DATABASE_URL':str(app.extensions['db'].url)})
     again=next(p for p in second.test_client().get('/api/catalog').json['products'] if p['code']=='D001')
     assert again['image']==custom
+
+def test_product_lists_remain_alphabetical_after_updates(client):
+    login(client)
+    items=client.get('/api/admin/products').json['items']
+    newest=items[-1]
+    payload={**newest,'image':'/static/images/catalog/test.jpg','expected_updated_at':newest['updated_at']}
+    assert client.put('/api/admin/products/'+newest['id'],headers=H,json=payload).status_code==200
+    admin_names=[item['name'] for item in client.get('/api/admin/products').json['items']]
+    catalog_names=[item['name'] for item in client.get('/api/catalog').json['products']]
+    assert admin_names==sorted(admin_names,key=normalize)
+    assert catalog_names==sorted(catalog_names,key=normalize)
 
 @pytest.mark.parametrize('query,expected',[('avocat','Avocat'),('avoca','Avocat'),('avocatt','Avocat'),('cilantro','Coriandre'),('coriandré','Coriandre'),('c’est quoi le code du gingembre?','Gingembre'),('D001','Avocat'),('banane biologique','Banane bio')])
 def test_products(client,query,expected):
