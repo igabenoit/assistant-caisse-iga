@@ -201,6 +201,18 @@ def create_app(test_config=None):
                 updated+=result.rowcount
             con.execute(insert(settings).values(key=catalogue_photo_key_9,value='done'))
             if updated: con.execute(update(settings).where(settings.c.key=='revision').values(value=str(uuid.uuid4())))
+
+        catalogue_photo_repair_key='catalogue_photos_2026_09_29_repair'
+        if not con.execute(select(settings.c.value).where(settings.c.key==catalogue_photo_repair_key)).scalar():
+            repairs=json.loads((ROOT/'data'/'catalog_photo_repair_2026_09_29.json').read_text(encoding='utf-8'))
+            updated=0
+            for old_image,new_image in repairs.items():
+                result=con.execute(update(products).where(
+                    products.c.image==old_image
+                ).values(image=new_image,updated_at=now()))
+                updated+=result.rowcount
+            con.execute(insert(settings).values(key=catalogue_photo_repair_key,value='done'))
+            if updated: con.execute(update(settings).where(settings.c.key=='revision').values(value=str(uuid.uuid4())))
     def revision(con): return con.execute(select(settings.c.value).where(settings.c.key=='revision')).scalar()
     def changed(con): con.execute(update(settings).where(settings.c.key=='revision').values(value=str(uuid.uuid4())))
     def lock_revision(con):
