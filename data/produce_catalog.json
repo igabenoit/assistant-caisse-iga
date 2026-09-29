@@ -132,7 +132,7 @@
     "code": "3079",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave8-asperge-mauve.jpg",
     "note": ""
   },
   {
@@ -164,7 +164,7 @@
     "code": "4602",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave8-aubergine-blanche.jpg",
     "note": ""
   },
   {
@@ -180,7 +180,7 @@
     "code": "3247",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave8-aubergine-graffiti.jpg",
     "note": ""
   },
   {
@@ -260,7 +260,7 @@
     "code": "4234",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave8-banane-miniature.jpg",
     "note": ""
   },
   {
@@ -540,7 +540,7 @@
     "code": "3039",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave8-cerise-terre.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -596,7 +596,7 @@
     "code": "4647",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave8-chanterelle.jpg",
     "note": ""
   },
   {
@@ -604,7 +604,7 @@
     "code": "3102",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave8-morille.jpg",
     "note": ""
   },
   {
@@ -612,7 +612,7 @@
     "code": "4649",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave8-pleurotte.jpg",
     "note": ""
   },
   {
@@ -620,7 +620,7 @@
     "code": "94649",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave8-pleurotte.jpg",
     "note": ""
   },
   {
@@ -644,7 +644,7 @@
     "code": "4651",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave8-shiitake.jpg",
     "note": ""
   },
   {
@@ -652,7 +652,7 @@
     "code": "4927",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave8-chataigne.jpg",
     "note": ""
   },
   {
@@ -660,7 +660,7 @@
     "code": "4257",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave8-cherimole.jpg",
     "note": ""
   },
   {
@@ -836,7 +836,7 @@
     "code": "3436",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave8-chou-fleur-orange.jpg",
     "note": "Vendu à l’unité."
   },
   {
