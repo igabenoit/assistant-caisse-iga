@@ -92,7 +92,7 @@
     "code": "4084",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-artichaud.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -100,7 +100,7 @@
     "code": "94516",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-artichaud.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -532,7 +532,7 @@
     "code": "4585",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-celeri-rave.jpg",
     "note": ""
   },
   {
@@ -692,7 +692,7 @@
     "code": "4627",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-chou-frise-vert.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -732,7 +732,7 @@
     "code": "94627",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-chou-frise-vert.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1140,7 +1140,7 @@
     "code": "4776",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-courge-spaghetti.jpg",
     "note": ""
   },
   {
@@ -1148,7 +1148,7 @@
     "code": "94776",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-courge-spaghetti.jpg",
     "note": ""
   },
   {
@@ -1244,7 +1244,7 @@
     "code": "4515",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-fenouil.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1252,7 +1252,7 @@
     "code": "94515",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-fenouil.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1388,7 +1388,7 @@
     "code": "4066",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-haricot-vert.jpg",
     "note": ""
   },
   {
@@ -1396,7 +1396,7 @@
     "code": "94066",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-haricot-vert.jpg",
     "note": ""
   },
   {
@@ -1444,7 +1444,7 @@
     "code": "4632",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-laitue-boston.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1468,7 +1468,7 @@
     "code": "4633",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-laitue-boston.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1788,7 +1788,7 @@
     "code": "4329",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-melon-miel.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1796,7 +1796,7 @@
     "code": "94034",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-melon-miel.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1804,7 +1804,7 @@
     "code": "94329",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-melon-miel.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -1828,7 +1828,7 @@
     "code": "4034",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-melon-miel.jpg",
     "note": "Vendu à l’unité."
   },
   {
@@ -2068,7 +2068,7 @@
     "code": "4381",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-orange-sanguine.jpg",
     "note": ""
   },
   {
@@ -2076,7 +2076,7 @@
     "code": "4390",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-orange-sanguine.jpg",
     "note": ""
   },
   {
@@ -2364,7 +2364,7 @@
     "code": "4073",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-patate-rouge.jpg",
     "note": ""
   },
   {
@@ -2860,7 +2860,7 @@
     "code": "3122",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-poivron-orange.jpg",
     "note": ""
   },
   {
@@ -2868,7 +2868,7 @@
     "code": "93121",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-poivron-orange.jpg",
     "note": ""
   },
   {
@@ -2876,7 +2876,7 @@
     "code": "94682",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-poivron-orange.jpg",
     "note": ""
   },
   {
@@ -2884,7 +2884,7 @@
     "code": "3121",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-poivron-orange.jpg",
     "note": ""
   },
   {
@@ -2892,7 +2892,7 @@
     "code": "4682",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-poivron-orange.jpg",
     "note": ""
   },
   {
@@ -2900,7 +2900,7 @@
     "code": "8764",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-poivron-orange.jpg",
     "note": ""
   },
   {
@@ -3100,7 +3100,7 @@
     "code": "94017",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-pomme-granny-smith.jpg",
     "note": ""
   },
   {
@@ -3108,7 +3108,7 @@
     "code": "94018",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-pomme-granny-smith.jpg",
     "note": ""
   },
   {
@@ -3284,7 +3284,7 @@
     "code": "3071",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-pomme-granny-smith.jpg",
     "note": ""
   },
   {
@@ -3292,7 +3292,7 @@
     "code": "4017",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-pomme-granny-smith.jpg",
     "note": ""
   },
   {
@@ -3300,7 +3300,7 @@
     "code": "4139",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-pomme-granny-smith.jpg",
     "note": ""
   },
   {
@@ -3308,7 +3308,7 @@
     "code": "94139",
     "keywords": "",
     "category": "Fruits et légumes",
-    "image": "",
+    "image": "/static/images/catalog/wave6-pomme-granny-smith.jpg",
     "note": ""
   },
   {
