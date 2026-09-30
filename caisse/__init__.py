@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
 from PIL import Image, UnidentifiedImageError
-from .models import metadata, products, knowledge, logs, settings, sessions, attempts, images, photo_references, now
+from .models import metadata, products, knowledge, logs, settings, sessions, attempts, images, now
 from .search import resolve, UNKNOWN, normalize
 from .importer import parse_file
 
@@ -36,7 +36,7 @@ def create_app(test_config=None):
     if url.startswith('sqlite:'): (ROOT/'instance').mkdir(exist_ok=True)
     engine=create_engine(url,pool_pre_ping=True,connect_args={'check_same_thread':False,'timeout':20} if url.startswith('sqlite') else {})
     metadata.create_all(engine)
-    app.config.update(HIDE_DEMO=prod,SECRET_KEY=secret,MAX_CONTENT_LENGTH=6*1024*1024,SESSION_COOKIE_HTTPONLY=True,SESSION_COOKIE_SAMESITE='Strict',SESSION_COOKIE_SECURE=prod,PERMANENT_SESSION_LIFETIME=timedelta(days=30))
+    app.config.update(SECRET_KEY=secret,MAX_CONTENT_LENGTH=6*1024*1024,SESSION_COOKIE_HTTPONLY=True,SESSION_COOKIE_SAMESITE='Strict',SESSION_COOKIE_SECURE=prod,PERMANENT_SESSION_LIFETIME=timedelta(days=30))
     if test_config: app.config.update(test_config)
     if prod: app.wsgi_app=ProxyFix(app.wsgi_app,x_for=1,x_proto=1,x_host=0)
     app.extensions['db']=engine
@@ -286,7 +286,7 @@ def create_app(test_config=None):
         r.headers['Referrer-Policy']='no-referrer'
         r.headers['Permissions-Policy']='microphone=(self), camera=(), geolocation=()'
         r.headers['Content-Security-Policy']="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https: blob:; connect-src 'self'; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
-        if request.path.startswith(('/api/','/admin/reconnaissance/')) or request.path in ('/','/admin','/essai-photo'): r.headers['Cache-Control']='no-store'
+        if request.path.startswith('/api/') or request.path in ('/','/admin'): r.headers['Cache-Control']='no-store'
         if prod: r.headers['Strict-Transport-Security']='max-age=31536000'
         return r
     @app.errorhandler(ValueError)
@@ -299,12 +299,6 @@ def create_app(test_config=None):
     def internal(e): return jsonify(error='Erreur serveur. Réessaie ou demande au superviseur.'),500
     @app.get('/')
     def home(): return render_template('index.html')
-    @app.get('/essai-photo')
-    def photo_trial(): return render_template('photo_trial.html')
-    @app.get('/photo-assets/<name>')
-    def photo_model_asset(name):
-        from .photo_assets import photo_asset
-        return photo_asset(name)
     @app.get('/credits')
     def credits():
         import re, html
@@ -315,10 +309,7 @@ def create_app(test_config=None):
     def admin(): return render_template('admin.html')
     @app.get('/sw.js')
     def service_worker():
-        # A deployment must change the worker bytes even when only app.js changed.
-        build=json.dumps(os.getenv('RENDER_GIT_COMMIT','local'))
-        r=Response('// build: '+build+'\n'+(ROOT/'static'/'sw.js').read_text(encoding='utf-8'),mimetype='application/javascript')
-        r.headers['Cache-Control']='no-cache';return r
+        r=send_file(ROOT/'static'/'sw.js',mimetype='application/javascript');r.headers['Cache-Control']='no-cache';return r
     @app.get('/healthz')
     def health():
         with engine.connect() as con: con.execute(text('SELECT 1'))
@@ -331,8 +322,6 @@ def create_app(test_config=None):
         if kind not in ('admin','kiosk'): raise ValueError('Rôle invalide.')
         stamp=int(time.time()); bucket=hmac.new(secret.encode(),(request.remote_addr or 'unknown').encode(),hashlib.sha256).hexdigest()
         with engine.begin() as con:
-            if engine.dialect.name=='postgresql': con.execute(text('SELECT pg_advisory_xact_lock(:bucket)'),{'bucket':int(bucket[:15],16)})
-            elif engine.dialect.name=='sqlite': con.exec_driver_sql('BEGIN IMMEDIATE')
             con.execute(delete(attempts).where(attempts.c.time<stamp-900))
             if con.execute(select(func.count()).select_from(attempts).where(attempts.c.bucket==bucket)).scalar()>=8:
                 return jsonify(error='Trop de tentatives. Réessaie dans 15 minutes.'),429
@@ -355,10 +344,19 @@ def create_app(test_config=None):
     def search():
         data=body(); q=string(data,'query',500,True); device=string(data,'device',80) or 'Tablette non nommée'
         with engine.connect() as con:
-            ps=[dict(x) for x in con.execute(select(products).where(products.c.active==True,products.c.demo==False if app.config['HIDE_DEMO'] else True)).mappings()]
-            ks=[dict(x) for x in con.execute(select(knowledge).where(knowledge.c.active==True,knowledge.c.demo==False if app.config['HIDE_DEMO'] else True)).mappings()]
+            ps=[dict(x) for x in con.execute(select(products).where(products.c.active==True)).mappings()]
+            ks=[dict(x) for x in con.execute(select(knowledge).where(knowledge.c.active==True)).mappings()]
             rev=revision(con)
-        result=resolve(q,ps,ks); result['revision']=rev
+        candidates=[q]
+        if data.get('source')=='voice' and isinstance(data.get('alternatives'),list):
+            for candidate in data['alternatives'][:5]:
+                if isinstance(candidate,str):
+                    candidate=candidate.strip()
+                    if candidate and len(candidate)<=500 and candidate not in candidates: candidates.append(candidate)
+        resolved=[(candidate,resolve(candidate,ps,ks)) for candidate in candidates]
+        selected_query,result=next(((candidate,item) for candidate,item in resolved if item.get('found')),resolved[0])
+        result['interpreted_query']=selected_query if data.get('source')=='voice' else q
+        result['revision']=rev
         if data.get('record') is True:
             event=string(data,'event_id',36,True)
             try: uuid.UUID(event)
@@ -368,7 +366,7 @@ def create_app(test_config=None):
                     # Savepoint absorbs duplicate concurrent submissions without dropping the search response.
                     try:
                         with con.begin_nested():
-                            con.execute(insert(logs).values(id=event,device=device,created_at=now(),kind=result['kind'],query=q,found=result['found'],source='voice' if data.get('source')=='voice' else 'text',count=len(result['products'])+len(result['answers'])))
+                            con.execute(insert(logs).values(id=event,device=device,created_at=now(),kind=result['kind'],query=selected_query,found=result['found'],source='voice' if data.get('source')=='voice' else 'text',count=len(result['products'])+len(result['answers'])))
                     except IntegrityError: pass
                 cutoff=(datetime.now(timezone.utc)-timedelta(days=int(os.getenv('LOG_RETENTION_DAYS','30')))).isoformat()
                 con.execute(delete(logs).where(logs.c.created_at<cutoff))
@@ -377,20 +375,14 @@ def create_app(test_config=None):
     @allowed()
     def catalog():
         with engine.connect() as con:
-            rows=[dict(x) for x in con.execute(select(products).where(products.c.active==True,products.c.demo==False if app.config['HIDE_DEMO'] else True)).mappings()]
+            rows=[dict(x) for x in con.execute(select(products).where(products.c.active==True)).mappings()]
             rows.sort(key=lambda row:(normalize(row['name']),row['code']))
             demo_count=sum(p['demo'] for p in rows)
-            featured_names=['banane','avocat','tomate','concombre','brocoli','citron','lime','pomme royal gala','laitue iceberg']
-            featured=[]
-            for name in featured_names:
-                matches=[p for p in rows if normalize(p['name'])==name and not p['demo']]
-                if len(matches)==1: featured.extend(matches)
-            if not featured: featured=rows[:9]
-            return jsonify(products=rows[:40],featured=featured,total=len(rows),demo_count=demo_count,revision=revision(con))
+            return jsonify(products=rows[:40],total=len(rows),demo_count=demo_count,revision=revision(con))
     @app.get('/api/knowledge/<id>')
     @allowed()
     def get_knowledge(id):
-        with engine.connect() as con: row=con.execute(select(knowledge).where(knowledge.c.id==id,knowledge.c.active==True,knowledge.c.demo==False if app.config['HIDE_DEMO'] else True)).mappings().first()
+        with engine.connect() as con: row=con.execute(select(knowledge).where(knowledge.c.id==id,knowledge.c.active==True)).mappings().first()
         if not row: return jsonify(error=UNKNOWN),404
         return jsonify(dict(row))
     @app.get('/api/revision')
@@ -476,11 +468,7 @@ def create_app(test_config=None):
             img=Image.open(io.BytesIO(raw))
             if img.width*img.height>20_000_000: raise ValueError('Image trop grande (maximum 20 mégapixels).')
             from PIL import ImageOps
-            img=ImageOps.exif_transpose(img)
-            if img.mode in ('RGBA','LA') or 'transparency' in img.info:
-                rgba=img.convert('RGBA');background=Image.new('RGB',img.size,'white');background.paste(rgba,mask=rgba.getchannel('A'));img=background
-            else: img=img.convert('RGB')
-            img.thumbnail((900,900))
+            img=ImageOps.exif_transpose(img).convert('RGB');img.thumbnail((900,900))
             out=io.BytesIO();img.save(out,'JPEG',quality=85)
         except (UnidentifiedImageError,OSError,Image.DecompressionBombError): raise ValueError('Image invalide. Utilise JPG, PNG ou WebP.')
         id=str(uuid.uuid4())
@@ -519,7 +507,7 @@ def create_app(test_config=None):
                 if old and mode=='add': skipped+=1;continue
                 if old:
                     # Missing optional columns never erase existing images or synonyms.
-                    for k in ['keywords','category','image','note','active','demo']:
+                    for k in ['keywords','category','image','note']:
                         if k not in original: row[k]=old[k]
                     con.execute(update(products).where(products.c.id==old['id']).values(**row));updated+=1
                 else: con.execute(insert(products).values(id=str(uuid.uuid4()),**row));created+=1
@@ -535,9 +523,6 @@ def create_app(test_config=None):
             elif engine.dialect.name=='sqlite': con.exec_driver_sql('BEGIN')
             payload={t.name:[dict(r) for r in con.execute(select(t)).mappings()] for t in [products,knowledge]}
             payload['images']=[{'id':r.id,'mime':r.mime,'data':base64.b64encode(r.data).decode()} for r in con.execute(select(images))]
-            payload['photo_references']=[{**dict(r),'data':base64.b64encode(r['data']).decode()} for r in con.execute(select(photo_references)).mappings()]
-        payload.update(schema_version=2,exported_at=now())
+        payload.update(schema_version=1,exported_at=now())
         return Response(json.dumps(payload,ensure_ascii=False),mimetype='application/json',headers={'Content-Disposition':'attachment; filename=assistant-caisse-sauvegarde.json'})
-    from .photo_bank import register_photo_bank
-    register_photo_bank(app,engine,allowed,revision,changed,lock_revision)
     return app
