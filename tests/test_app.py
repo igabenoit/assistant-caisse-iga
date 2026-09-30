@@ -18,9 +18,7 @@ def app(tmp_path,monkeypatch):
         reset_engine=create_engine(test_url)
         metadata.drop_all(reset_engine)
         reset_engine.dispose()
-    application=create_app({'TESTING':True,'DATABASE_URL':os.getenv('TEST_DATABASE_URL') or 'sqlite:///'+str(tmp_path/'test.db')})
-    try: yield application
-    finally: application.extensions['db'].dispose()
+    return create_app({'TESTING':True,'DATABASE_URL':os.getenv('TEST_DATABASE_URL') or 'sqlite:///'+str(tmp_path/'test.db')})
 @pytest.fixture
 def client(app): return app.test_client()
 def login(client):
@@ -36,9 +34,8 @@ def test_demo_seed_and_no_reseed(app,client):
     login(client)
     row=client.get('/api/admin/products').json['items'][0]
     assert client.delete('/api/admin/products/'+row['id'],headers=H,json={'expected_updated_at':row['updated_at']}).status_code==200
-    second=create_app({'TESTING':True,'DATABASE_URL':app.config['DATABASE_URL']})
+    second=create_app({'TESTING':True,'DATABASE_URL':str(app.extensions['db'].url)})
     assert second.test_client().get('/api/catalog').json['total']==25
-    second.extensions['db'].dispose()
 
 def test_catalogue_photo_upgrade_preserves_manager_photo(app,client):
     login(client)
@@ -46,10 +43,9 @@ def test_catalogue_photo_upgrade_preserves_manager_photo(app,client):
     custom='/api/images/00000000-0000-0000-0000-000000000001'
     payload={**row,'image':custom,'expected_updated_at':row['updated_at']}
     assert client.put('/api/admin/products/'+row['id'],headers=H,json=payload).status_code==200
-    second=create_app({'TESTING':True,'DATABASE_URL':app.config['DATABASE_URL']})
+    second=create_app({'TESTING':True,'DATABASE_URL':str(app.extensions['db'].url)})
     again=next(p for p in second.test_client().get('/api/catalog').json['products'] if p['code']=='D001')
     assert again['image']==custom
-    second.extensions['db'].dispose()
 
 def test_product_lists_remain_alphabetical_after_updates(client):
     login(client)
@@ -70,6 +66,18 @@ def test_products(client,query,expected):
 def test_bio_is_distinct_and_multiple_apples(client):
     assert [p['name'] for p in search(client,'banane bio').json['products']]==['Banane bio']
     assert len(search(client,'pomme').json['products'])>=3
+
+def test_voice_uses_catalog_match_from_recognition_alternatives(client):
+    r=search(client,'jambes',source='voice',alternatives=['jambes','gingembre'])
+    assert r.status_code==200
+    assert r.json['interpreted_query']=='gingembre'
+    assert [p['name'] for p in r.json['products']]==['Gingembre']
+
+def test_text_search_ignores_voice_alternatives(client):
+    r=search(client,'mot inconnu',source='text',alternatives=['gingembre'])
+    assert r.status_code==200
+    assert r.json['found'] is False
+    assert r.json['interpreted_query']=='mot inconnu'
 
 @pytest.mark.parametrize('query,title',[
 ('Comment je fais un remboursement sans facture?','Retour sans facture'),
@@ -197,3 +205,4 @@ def test_live_update_stream(app,client):
     assert b'data: ' in change and rev.encode() not in change
     assert search(tablet,'synchronise').json['products'][0]['code']=='SYNC01'
     response.close()
+
