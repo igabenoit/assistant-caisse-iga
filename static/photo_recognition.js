@@ -86,11 +86,15 @@ window.photoRecognition=(()=>{
    finally{clearTimeout(timer);bankLoading=null;}
   })();return bankLoading;
  }
- function rank(vector,products){
+ function scoreReferences(vector,products){
   const ranked=products.map(p=>{
    const scores=p.vectors.filter(v=>v.length===vector.length).map(v=>v.reduce((sum,x,i)=>sum+x*vector[i],0)).filter(Number.isFinite).sort((a,b)=>b-a);
    return {...p,score:scores.length?(scores[0]*.8+(scores[1]??scores[0])*.2):-1};
   }).sort((a,b)=>b.score-a.score);
+  return ranked;
+ }
+ function rank(vector,products){
+  const ranked=scoreReferences(vector,products);
   if(!ranked.length||ranked[0].score<.75)return [];
   // These are conservative trial thresholds, not calibrated probabilities.
   return ranked.filter(p=>p.score>=.75&&p.score>=ranked[0].score-.07).slice(0,3).map(p=>({label:p.name,query:p.code,id:p.id,reference:true,image:p.image}));
@@ -102,7 +106,17 @@ window.photoRecognition=(()=>{
  async function recognize(canvas,onStatus=()=>{}){
   onStatus('Vérification de la banque du magasin…');const data=await bank();
   if(!data.products.length)return recognizeGeneral(canvas,onStatus);
-  const vector=await embed(canvas,onStatus);onStatus('Comparaison avec les produits du magasin…');return rank(vector,data.products);
+  const vector=await embed(canvas,onStatus);onStatus('Comparaison avec les produits du magasin…');const matches=rank(vector,data.products);
+  // A populated bank must not disable the broad classifier for unmatched products.
+  return matches.length?matches:recognizeGeneral(canvas,onStatus);
  }
- return {recognize,recognizeBank,embed,embedPrepared,isolateSubject,subjectPlan,rank,bank,modelId,candidates,preload:getModel};
+ async function diagnose(canvas,onStatus=()=>{}){
+  const data=await bank();
+  const original=canvas.toDataURL('image/jpeg',.85);
+  let prepared;
+  try{prepared=isolateSubject(canvas,onStatus);}catch(error){return {original,width:canvas.width,height:canvas.height,products:data.products.length,references:data.products.reduce((n,p)=>n+p.vectors.length,0),error:error.message};}
+  const vector=await embedPrepared(prepared,onStatus);
+  return {original,prepared:prepared.toDataURL('image/jpeg',.85),width:canvas.width,height:canvas.height,products:data.products.length,references:data.products.reduce((n,p)=>n+p.vectors.length,0),ranked:scoreReferences(vector,data.products).slice(0,5).map(p=>({name:p.name,code:p.code,score:p.score,views:p.vectors.length})),accepted:rank(vector,data.products)};
+ }
+ return {recognize,recognizeBank,diagnose,scoreReferences,embed,embedPrepared,isolateSubject,subjectPlan,rank,bank,modelId,candidates,preload:getModel};
 })();

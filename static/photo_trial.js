@@ -3,7 +3,7 @@
 const $=selector=>document.querySelector(selector);
 let generation=0,previewUrl=null,photoCanvas=null,recognizing=false,catalogRequest=0;
 function clearSuggestions(){catalogRequest++;$('#photo-suggestions').replaceChildren();$('#photo-suggestions').classList.add('hidden');}
-function clearPreview(){clearSuggestions();photoCanvas=null;if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=null;$('#trial-image').removeAttribute('src');$('#photo-result').classList.add('hidden');}
+function clearPreview(){clearSuggestions();$('#photo-diagnostic').classList.add('hidden');$('#photo-diagnostic-content').replaceChildren();photoCanvas=null;if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=null;$('#trial-image').removeAttribute('src');$('#photo-result').classList.add('hidden');}
 function resetPhoto(){generation++;clearPreview();$('#camera-file').value='';$('#gallery-file').value='';$('#photo-status').textContent='Photo retirée. Aucune photo n’a été envoyée.';}
 async function previewPhoto(file){
  if(!file)return;
@@ -21,12 +21,11 @@ async function previewPhoto(file){
   const canvas=document.createElement('canvas');canvas.width=Math.round(image.naturalWidth*ratio);canvas.height=Math.round(image.naturalHeight*ratio);
   const context=canvas.getContext('2d');if(!context)throw new Error('L’aperçu est indisponible sur ce navigateur.');
   context.fillStyle='white';context.fillRect(0,0,canvas.width,canvas.height);context.drawImage(image,0,0,canvas.width,canvas.height);
-  const isolated=window.photoRecognition.isolateSubject(canvas,text=>{if(current===generation)$('#photo-status').textContent=text;});
-  const blob=await new Promise(resolve=>isolated.toBlob(resolve,'image/jpeg',.85));
+  const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.85));
   if(current!==generation)return;
   if(!blob)throw new Error('Impossible de préparer cette photo. Essaie une autre photo.');
-  photoCanvas=canvas;previewUrl=URL.createObjectURL(blob);$('#trial-image').src=previewUrl;$('#photo-result').classList.remove('hidden');
-  $('#photo-status').textContent='Sujet isolé sur fond neutre. Touche « Reconnaître ce produit ». Aucun envoi de photo n’a été effectué.';
+  photoCanvas=canvas;$('#photo-diagnostic').classList.remove('hidden');previewUrl=URL.createObjectURL(blob);$('#trial-image').src=previewUrl;$('#photo-result').classList.remove('hidden');
+  $('#photo-status').textContent='Photo complète chargée. Touche « Reconnaître ce produit ». Aucun envoi de photo n’a été effectué.';
  }catch(error){if(current===generation)$('#photo-status').textContent=error.message||'Impossible de préparer cette photo.';}
  finally{if(sourceUrl)URL.revokeObjectURL(sourceUrl);}
 }
@@ -82,4 +81,15 @@ $('#sample-photo').addEventListener('click',async()=>{
  const current=++generation;clearPreview();$('#photo-status').textContent='Chargement de la photo d’exemple…';
  try{const response=await fetch('/static/images/catalog/4011-banane.jpg');if(!response.ok)throw Error();const blob=await response.blob();if(current===generation)await previewPhoto(blob);}
  catch{if(current===generation)$('#photo-status').textContent='Photo d’exemple indisponible. Choisis ta propre photo.';}
+});
+
+$('#photo-diagnostic').addEventListener('toggle',async()=>{
+ if(!$('#photo-diagnostic').open||!photoCanvas)return;
+ const current=generation,canvas=photoCanvas,area=$('#photo-diagnostic-content');area.replaceChildren(node('p','Vérification…'));
+ try{const d=await window.photoRecognition.diagnose(canvas);if(current!==generation)return;area.replaceChildren(node('p',d.width+' × '+d.height+' pixels · '+d.products+' produits · '+d.references+' références actives'));
+ for(const [label,src] of [['Photo complète',d.original],['Photo après détourage',d.prepared]]){if(!src)continue;area.append(node('h3',label));const img=document.createElement('img');img.src=src;img.alt=label;img.style.maxWidth='100%';img.style.maxHeight='320px';img.style.objectFit='contain';area.append(img);}
+ if(d.error)area.append(node('p',d.error));
+ for(const p of d.ranked||[])area.append(node('p',p.name+' · '+p.code+' · similarité '+p.score.toFixed(3)+' · '+p.views+' référence(s)'));
+ area.append(node('p',d.accepted?.length?'La banque propose une correspondance.':'Aucune correspondance acceptée dans la banque.'));
+ }catch(e){if(current===generation)area.replaceChildren(node('p',e.message));}
 });
