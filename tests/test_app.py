@@ -29,6 +29,14 @@ def login(client):
 
 def search(c,q,record=False,**more):return c.post('/api/search',headers=H,json={'query':q,'record':record,'event_id':str(uuid.uuid4()),'device':'Caisse test',**more})
 
+def test_employee_installation_guide_is_public_and_mobile_ready(client):
+    response=client.get('/installation')
+    assert response.status_code==200
+    assert b'viewport' in response.data
+    assert 'iPhone ou iPad'.encode() in response.data
+    assert b'Android' in response.data
+    assert b'assistant-caisse-iga.onrender.com' in response.data
+
 def test_demo_seed_and_no_reseed(app,client):
     assert len(client.get('/api/catalog').json['products'])==26
     assert client.get('/api/catalog').json['demo_count']==26
