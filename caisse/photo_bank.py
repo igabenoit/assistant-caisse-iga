@@ -5,7 +5,7 @@ from PIL import Image, ImageOps, UnidentifiedImageError
 from sqlalchemy import select, insert, update, func
 from .models import photo_references as refs, products, now
 
-MODEL='mobilenet-v1-050-gap-v1'
+MODEL='mobilenet-v1-050-gap-subject-v2'
 DIMENSIONS=512
 
 def register_photo_bank(app, engine, allowed, revision, changed, lock_revision):
@@ -36,7 +36,7 @@ def register_photo_bank(app, engine, allowed, revision, changed, lock_revision):
         with engine.connect() as con:
             product=con.execute(select(products).where(products.c.id==product_id)).mappings().first()
             if not product: abort(404)
-            rows=con.execute(select(refs.c.id,refs.c.active,refs.c.created_at).where(refs.c.product_id==product_id).order_by(refs.c.created_at)).mappings()
+            rows=con.execute(select(refs.c.id,refs.c.active,refs.c.created_at,refs.c.model).where(refs.c.product_id==product_id).order_by(refs.c.created_at)).mappings()
             return jsonify(product=dict(product),photos=[dict(r,image='/api/admin/photo-reference/'+r['id']) for r in rows])
 
     @app.get('/api/admin/photo-reference/<reference_id>')
@@ -74,8 +74,8 @@ def register_photo_bank(app, engine, allowed, revision, changed, lock_revision):
             if existing:
                 if existing!=product_id: abort(409)
                 return jsonify(id=reference_id,already_saved=True)
-            count=con.execute(select(func.count()).select_from(refs).where(refs.c.product_id==product_id,refs.c.active==True)).scalar()
-            total=con.execute(select(func.count()).select_from(refs).where(refs.c.active==True)).scalar()
+            count=con.execute(select(func.count()).select_from(refs).where(refs.c.product_id==product_id,refs.c.active==True,refs.c.model==MODEL)).scalar()
+            total=con.execute(select(func.count()).select_from(refs).where(refs.c.active==True,refs.c.model==MODEL)).scalar()
             if count>=20 or total>=2000: raise ValueError('Limite atteinte : 20 photos actives par produit, 2 000 pour la banque. Désactive une photo avant d’en ajouter.')
             con.execute(insert(refs).values(id=reference_id,product_id=product_id,model=MODEL,embedding=json.dumps(vector),data=output.getvalue(),active=True,created_at=now()));changed(con)
         return jsonify(id=reference_id),201
@@ -90,8 +90,8 @@ def register_photo_bank(app, engine, allowed, revision, changed, lock_revision):
             row=con.execute(select(refs).where(refs.c.id==reference_id)).mappings().first()
             if not row: abort(404)
             if active and not row['active']:
-                count=con.execute(select(func.count()).select_from(refs).where(refs.c.product_id==row['product_id'],refs.c.active==True)).scalar()
-                total=con.execute(select(func.count()).select_from(refs).where(refs.c.active==True)).scalar()
+                count=con.execute(select(func.count()).select_from(refs).where(refs.c.product_id==row['product_id'],refs.c.active==True,refs.c.model==MODEL)).scalar()
+                total=con.execute(select(func.count()).select_from(refs).where(refs.c.active==True,refs.c.model==MODEL)).scalar()
                 if count>=20 or total>=2000: raise ValueError('Limite de photos actives atteinte.')
             con.execute(update(refs).where(refs.c.id==reference_id).values(active=active));changed(con)
         return jsonify(ok=True)

@@ -6,6 +6,8 @@ const scores=new Array(1000).fill(0);scores[954]=.9;
 assert.equal(w.photoRecognition.candidates(scores)[0].query,'banane');
 scores[954]=.12;assert.equal(w.photoRecognition.candidates(scores).length,0);
 scores[954]=.3;scores[1]=.6;assert.equal(w.photoRecognition.candidates(scores).length,0);
+function synthetic(background,subject){const width=64,height=64,data=new Uint8ClampedArray(width*height*4);for(let y=0;y<height;y++)for(let x=0;x<width;x++){const color=x>=18&&x<46&&y>=14&&y<50?subject:background,i=(y*width+x)*4;data.set([...color,255],i);}return{data,width,height};}
+for(const background of [[255,255,255],[112,72,42]]){const plan=w.photoRecognition.subjectPlan(synthetic(background,[220,92,28]));assert.ok(plan);assert.ok(plan.coverage>.15&&plan.coverage<.5);assert.ok(plan.box.x<=18&&plan.box.right>=46&&plan.box.y<=14&&plan.box.bottom>=50);}
 w.eval(fs.readFileSync('static/photo_trial.js','utf8')+'\nwindow.runPhoto=recognizePhoto;window.setPhoto=()=>{photoCanvas={};};window.resetPhoto=resetPhoto;');
 const tick=()=>new Promise(r=>setImmediate(r));
 (async()=>{
