@@ -23,6 +23,8 @@ services:
         sync: false
       - key: KIOSK_PIN
         sync: false
+      - key: KIOSK_SESSION_DAYS
+        value: "180"
       - key: SEED_DEMO
         value: "true"
       - key: LOG_RETENTION_DAYS
