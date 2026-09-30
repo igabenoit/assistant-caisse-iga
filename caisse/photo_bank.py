@@ -9,6 +9,37 @@ MODEL='mobilenet-v1-050-gap-subject-v2'
 DIMENSIONS=512
 
 def register_photo_bank(app, engine, allowed, revision, changed, lock_revision):
+    @app.get('/api/admin/photo-migration')
+    @allowed(admin=True)
+    def pending_reference_migration():
+        with engine.connect() as con:
+            rows=con.execute(select(refs.c.id,refs.c.model).where(refs.c.model!=MODEL).order_by(refs.c.id)).mappings()
+            return jsonify(photos=[dict(r,image='/api/admin/photo-reference/'+r['id']) for r in rows])
+
+    @app.post('/api/admin/photo-reference/<reference_id>/migrate')
+    @allowed(admin=True)
+    def migrate_reference(reference_id):
+        data=request.get_json(silent=True) or {}
+        vector=data.get('embedding')
+        if (data.get('model')!=MODEL or not isinstance(vector,list) or len(vector)!=DIMENSIONS
+                or not all(type(v) in (int,float) and math.isfinite(v) for v in vector)
+                or not .99<=math.hypot(*vector)<=1.01):
+            raise ValueError('Signature de photo invalide.')
+        with engine.begin() as con:
+            lock_revision(con)
+            row=con.execute(select(refs).where(refs.c.id==reference_id)).mappings().first()
+            if not row: abort(404)
+            if row['model']==MODEL: return jsonify(ok=True,already_saved=True)
+            if row['model']!=data.get('source_model'): abort(409)
+            # Keep the original JPEG, identity, date and activation state for recovery.
+            if row['active']:
+                count=con.execute(select(func.count()).select_from(refs).where(refs.c.product_id==row['product_id'],refs.c.active==True,refs.c.model==MODEL)).scalar()
+                total=con.execute(select(func.count()).select_from(refs).where(refs.c.active==True,refs.c.model==MODEL)).scalar()
+                if count>=20 or total>=2000: raise ValueError('Limite de photos actives atteinte. La photo originale est conservée.')
+            con.execute(update(refs).where(refs.c.id==reference_id).values(model=MODEL,embedding=json.dumps(vector)))
+            changed(con)
+        return jsonify(ok=True)
+
     @app.get('/admin/reconnaissance')
     @app.get('/admin/reconnaissance/<product_id>')
     def reference_page(product_id=''):

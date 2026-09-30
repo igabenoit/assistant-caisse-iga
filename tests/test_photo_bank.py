@@ -47,3 +47,29 @@ def test_reference_limit_and_reactivation(client):
     assert client.put('/api/admin/photo-reference/'+ids[0],headers=H,json={'active':False}).status_code==200
     assert add(client,p['id']).status_code==201
     assert client.put('/api/admin/photo-reference/'+ids[0],headers=H,json={'active':True}).status_code==400
+
+def test_migration_preserves_originals_and_is_resumable(app,client):
+    from sqlalchemy import select,update
+    from caisse.models import photo_references as refs
+    assert client.get('/api/admin/photo-migration').status_code==401
+    login(client);p=product(client);rid=str(uuid.uuid4())
+    add(client,p['id'],rid)
+    with app.extensions['db'].begin() as con:
+        con.execute(update(refs).where(refs.c.id==rid).values(model='legacy',active=False))
+        before=dict(con.execute(select(refs).where(refs.c.id==rid)).mappings().one())
+    assert client.get('/api/admin/photo-migration').json['photos'][0]['id']==rid
+    payload={'source_model':'legacy','model':MODEL,'embedding':[0.0,1.0]+[0.0]*510}
+    url='/api/admin/photo-reference/'+rid+'/migrate'
+    assert client.post(url,headers=H,json={**payload,'embedding':[0]*512}).status_code==400
+    assert client.post(url,headers=H,json={**payload,'source_model':'wrong'}).status_code==409
+    assert client.post(url,headers=H,json=payload).status_code==200
+    assert client.post(url,headers=H,json=payload).json['already_saved']
+    assert client.get('/api/admin/photo-migration').json['photos']==[]
+    with app.extensions['db'].connect() as con:
+        after=dict(con.execute(select(refs).where(refs.c.id==rid)).mappings().one())
+    for key in ('data','active','product_id','created_at','id'): assert after[key]==before[key]
+    assert after['model']==MODEL
+    assert json.loads(after['embedding'])==payload['embedding']
+    assert not client.get('/api/photo-bank').json['products']
+    client.put('/api/admin/photo-reference/'+rid,headers=H,json={'active':True})
+    assert client.get('/api/photo-bank').json['products'][0]['vectors']==[payload['embedding']]
