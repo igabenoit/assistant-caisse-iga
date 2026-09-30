@@ -132,6 +132,9 @@ function cancelPhoto(){
 function closePhotoPicker(){photoPickerOpen=false;clearTimeout(photoPickerTimer);}
 $('#camera').addEventListener('click',()=>{
  cancelVoice();cancelPhoto();clearTimeout(debounce);clearTimeout(recordTimer);photoPickerOpen=true;
+ controller?.abort();requestNumber++;$('#query').value='';$('#clear-query').classList.add('hidden');
+ $('#results').replaceChildren();$('#results-title').textContent='Nouvelle photo';$('#results-count').textContent='';
+ $('#voice-status').textContent='Choisis ou prends la nouvelle photo.';
  photoPickerTimer=setTimeout(closePhotoPicker,120000);
  // Warm the model while the employee takes the photo; no photo is uploaded.
  window.photoRecognition?.preload?.().catch(()=>{});

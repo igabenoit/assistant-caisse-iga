@@ -22,6 +22,7 @@ jobs:
       - run: node tests/photo-recognition.cjs
       - run: node tests/quick-photo.cjs
       - run: node tests/photo-bank.cjs
+      - run: node tests/photo-migration.cjs
       - run: python scripts/audit_search.py --output audit-results.json
 
   postgres:
