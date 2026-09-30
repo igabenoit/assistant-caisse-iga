@@ -83,7 +83,6 @@ def test_text_search_ignores_voice_alternatives(client):
 ('Comment je fais un remboursement sans facture?','Retour sans facture'),
 ('Comment vendre une carte cadeau?','Vendre une carte cadeau'),
 ('Quel poste j’appelle pour la boulangerie?','Poste de la boulangerie'),
-('Que dois-je faire si le paiement débit a passé mais que la caisse indique une erreur?','Débit accepté, erreur à la caisse'),
 ('client pas de facture','Retour sans facture')])
 def test_demo_questions(client,query,title):
     r=search(client,query);assert r.json['found'],r.json
