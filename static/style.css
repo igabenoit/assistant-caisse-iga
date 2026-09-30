@@ -83,3 +83,4 @@ footer a{display:inline-flex;align-items:center;min-height:44px}
 #trial-image{display:block;width:100%;height:280px;object-fit:contain}
 .photo-guidance{padding-left:22px;line-height:1.6;font-size:15px}.photo-shell .notice{margin-top:18px}.photo-shell .muted{font-size:14px}
 @media(max-width:350px){.photo-actions{grid-template-columns:1fr}#trial-image{height:230px}}
+.photo-preview-area #recognize-photo{width:100%;margin:12px 0}.photo-suggestions{background:white;border:1px solid var(--line);border-radius:18px;padding:20px;margin:20px 0}.photo-choice{display:block;width:100%;margin:10px 0;text-align:left;white-space:normal}.photo-shell details{margin:24px 0;line-height:1.6}.photo-shell summary{cursor:pointer;font-weight:600}.photo-suggestions .plu{display:block;overflow-wrap:anywhere}

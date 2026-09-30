@@ -19,6 +19,7 @@ jobs:
       - run: node tests/admin-races.cjs
       - run: node tests/pwa.cjs
       - run: node tests/photo-trial.cjs
+      - run: node tests/photo-recognition.cjs
       - run: python scripts/audit_search.py --output audit-results.json
 
   postgres:

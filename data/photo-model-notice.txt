@@ -1,0 +1,10 @@
+Reconnaissance photo expérimentale, gratuite et locale
+
+TensorFlow.js 4.22.0 (Apache-2.0) : https://github.com/tensorflow/tfjs/tree/tfjs-v4.22.0
+MobileNet V1 0.50, ImageNet, modèle public TensorFlow.js : https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v1_0.50_224/model.json
+Catégories ImageNet : https://github.com/tensorflow/tfjs-examples/blob/master/mobilenet/imagenet_classes.js
+Documentation : https://github.com/tensorflow/tfjs-models/tree/master/mobilenet
+
+Les fichiers téléchargés sont contrôlés par SHA-256 (photo-assets.json) et servis depuis la même origine. Aucune photo n’est envoyée au serveur. Seul le nom de famille confirmé est soumis à la recherche catalogue existante, sans journalisation.
+Le modèle propose des familles de produits; il ne détermine pas les variétés, les formats ou le statut biologique. Aucun PLU n’est contenu dans la table de correspondance du modèle. Les codes proviennent uniquement des fiches actives du catalogue après sélection explicite.
+L’essai doit être évalué avec des photos prises en magasin avant une utilisation régulière. Les seuils de suggestion sont heuristiques, pas une mesure de précision garantie.

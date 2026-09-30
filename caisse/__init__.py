@@ -301,6 +301,10 @@ def create_app(test_config=None):
     def home(): return render_template('index.html')
     @app.get('/essai-photo')
     def photo_trial(): return render_template('photo_trial.html')
+    @app.get('/photo-assets/<name>')
+    def photo_model_asset(name):
+        from .photo_assets import photo_asset
+        return photo_asset(name)
     @app.get('/credits')
     def credits():
         import re, html

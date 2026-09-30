@@ -21,7 +21,7 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
  const first=w.previewPhoto({size:100,type:'image/jpeg'});images.at(-1).onload();await tick();
  assert.equal(blobs.at(-1).width,1280);assert.equal(blobs.at(-1).height,960);
  blobs.at(-1).callback(new w.Blob(['image']));await first;
- assert.equal(hidden(),false);assert.match(status(),/aucun envoi/);
+ assert.equal(hidden(),false);assert.match(status(),/aucun envoi/i);
  w.document.querySelector('#clear-photo').click();assert.equal(hidden(),true);assert.ok(revoked.length>=2);
  const pending=w.previewPhoto({size:100,type:'image/jpeg'});const stale=images.at(-1);
  w.document.querySelector('#clear-photo').click();stale.onload();await pending;assert.equal(hidden(),true);
