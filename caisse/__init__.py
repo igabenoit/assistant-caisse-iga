@@ -24,10 +24,12 @@ def create_app(test_config=None):
     password=os.getenv('ADMIN_PASSWORD','')
     password_hash=os.getenv('ADMIN_PASSWORD_HASH','')
     pin=os.getenv('KIOSK_PIN','')
+    kiosk_session_days=max(1,min(int(os.getenv('KIOSK_SESSION_DAYS','180')),365))
     url=os.getenv('DATABASE_URL') or 'sqlite:///'+str(ROOT/'instance'/'caisse.db')
     if test_config:
         secret='isolated-test-secret-key-longer-than-32'; password='Testing-password-123'; pin=''
         url=test_config.get('DATABASE_URL',url); prod=False
+    kiosk_generation=hmac.new(secret.encode(),pin.encode(),hashlib.sha256).hexdigest() if pin else ''
     if len(secret)<32: raise RuntimeError('SECRET_KEY manquante. Exécuter python scripts/setup_dev.py ou configurer Render.')
     if not password_hash and len(password)<12: raise RuntimeError('ADMIN_PASSWORD doit contenir au moins 12 caractères.')
     if prod and (not url.startswith(('postgres://','postgresql://','postgresql+psycopg://')) or len(pin)<6):
@@ -36,7 +38,7 @@ def create_app(test_config=None):
     if url.startswith('sqlite:'): (ROOT/'instance').mkdir(exist_ok=True)
     engine=create_engine(url,pool_pre_ping=True,connect_args={'check_same_thread':False,'timeout':20} if url.startswith('sqlite') else {})
     metadata.create_all(engine)
-    app.config.update(HIDE_DEMO=prod,SECRET_KEY=secret,MAX_CONTENT_LENGTH=6*1024*1024,SESSION_COOKIE_HTTPONLY=True,SESSION_COOKIE_SAMESITE='Strict',SESSION_COOKIE_SECURE=prod,PERMANENT_SESSION_LIFETIME=timedelta(days=30))
+    app.config.update(HIDE_DEMO=prod,SECRET_KEY=secret,MAX_CONTENT_LENGTH=6*1024*1024,SESSION_COOKIE_HTTPONLY=True,SESSION_COOKIE_SAMESITE='Strict',SESSION_COOKIE_SECURE=prod,PERMANENT_SESSION_LIFETIME=timedelta(days=kiosk_session_days))
     if test_config: app.config.update(test_config)
     if prod: app.wsgi_app=ProxyFix(app.wsgi_app,x_for=1,x_proto=1,x_host=0)
     app.extensions['db']=engine
@@ -239,7 +241,9 @@ def create_app(test_config=None):
         token=session.get('token','')
         if not token: return None
         with engine.connect() as con:
-            return con.execute(select(sessions.c.role).where(sessions.c.token_hash==hashlib.sha256(token.encode()).hexdigest(),sessions.c.expires>int(time.time()))).scalar()
+            current_role=con.execute(select(sessions.c.role).where(sessions.c.token_hash==hashlib.sha256(token.encode()).hexdigest(),sessions.c.expires>int(time.time()))).scalar()
+        if current_role=='kiosk' and session.get('kiosk_generation')!=kiosk_generation: return None
+        return current_role
     def allowed(admin=False):
         def wrap(fn):
             @wraps(fn)
@@ -299,6 +303,8 @@ def create_app(test_config=None):
     def internal(e): return jsonify(error='Erreur serveur. Réessaie ou demande au superviseur.'),500
     @app.get('/')
     def home(): return render_template('index.html')
+    @app.get('/installation')
+    def installation(): return render_template('installation.html')
     @app.get('/essai-photo')
     def photo_trial(): return render_template('photo_trial.html')
     @app.get('/photo-assets/<name>')
@@ -343,8 +349,10 @@ def create_app(test_config=None):
         with engine.begin() as con:
             con.execute(delete(sessions).where(sessions.c.expires<stamp))
             con.execute(delete(attempts).where(attempts.c.bucket==bucket))
-            con.execute(insert(sessions).values(token_hash=hashlib.sha256(token.encode()).hexdigest(),role=kind,expires=stamp+(8*3600 if kind=='admin' else 30*86400)))
-        session.clear(); session['token']=token; session.permanent=True
+            con.execute(insert(sessions).values(token_hash=hashlib.sha256(token.encode()).hexdigest(),role=kind,expires=stamp+(8*3600 if kind=='admin' else kiosk_session_days*86400)))
+        session.clear(); session['token']=token
+        if kind=='kiosk': session['kiosk_generation']=kiosk_generation
+        session.permanent=True
         return jsonify(role=kind)
     @app.post('/api/logout')
     def logout():
