@@ -65,7 +65,7 @@ $('#device-button').addEventListener('click',()=>{$('#device-name').value=device
 $('#device-form').addEventListener('submit',e=>{e.preventDefault();device=$('#device-name').value.trim()||'Ma tablette';storage.set('caisse-device',device);updateDevice();$('#device-dialog').close();});
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>$('#'+b.dataset.close).close()));
 $('#install-help').addEventListener('click',()=>$('#install-dialog').showModal());
-$('#kiosk-login').addEventListener('submit',async e=>{e.preventDefault();try{await api('/api/login',{method:'POST',body:JSON.stringify({role:'kiosk',password:$('#kiosk-password').value})});$('#kiosk-password').value='';$('#gate').classList.add('hidden');$('#cashier').classList.remove('hidden');await home();startSync();}catch(err){$('#gate-error').textContent=err.message;}});
+$('#kiosk-login').addEventListener('submit',async e=>{e.preventDefault();try{await api('/api/login',{method:'POST',body:JSON.stringify({role:'kiosk',password:$('#kiosk-password').value})});$('#kiosk-password').value='';$('#gate').classList.add('hidden');$('#cashier').classList.remove('hidden');await refresh();startSync();}catch(err){$('#gate-error').textContent=err.message;}});
 function stopVoice(){voiceGeneration++;clearTimeout(voiceTimer);clearTimeout(voiceStartTimer);listening=false;voicePending=false;$('#mic').classList.remove('listening');$('#mic span').textContent='Parler';$('#mic').setAttribute('aria-label','Dicter une recherche');$('#mic').setAttribute('aria-pressed','false');}
 function cancelVoice(message='Écoute arrêtée.'){const old=recognition;stopVoice();try{old?.abort();}catch{}$('#voice-status').textContent=message;}
 function setupVoice(){
@@ -97,5 +97,22 @@ function startSync(){
 window.addEventListener('offline',()=>{clearTimeout(debounce);clearTimeout(recordTimer);cancelVoice('Hors connexion. Utilise le clavier après reconnexion.');controller?.abort();requestNumber++;finishResult();showConnection('Hors connexion. Connecte la tablette à Internet pour vérifier les codes.');$('#results').innerHTML='';stopSync();});
 window.addEventListener('online',()=>{refresh();startSync();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelVoice();stopSync();}else if(!$('#cashier').classList.contains('hidden')){refresh();startSync();}});
-(async()=>{updateDevice();setupVoice();try{const s=await api('/api/session');if(s.kiosk_required&&!s.role){$('#gate').classList.remove('hidden');return;}$('#cashier').classList.remove('hidden');await home();startSync();}catch{showConnection('Impossible de joindre le serveur. Recharge la page.')}})();
-if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+try{const saved=sessionStorage.getItem('caisse-update-query');sessionStorage.removeItem('caisse-update-query');if(saved){$('#query').value=saved;$('#clear-query').classList.remove('hidden');}}catch{}
+(async()=>{updateDevice();setupVoice();try{const s=await api('/api/session');if(s.kiosk_required&&!s.role){$('#gate').classList.remove('hidden');return;}$('#cashier').classList.remove('hidden');await refresh();startSync();}catch{showConnection('Impossible de joindre le serveur. Recharge la page.')}})();
+if('serviceWorker' in navigator){
+ let controlled=Boolean(navigator.serviceWorker.controller),reloading=false;
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{
+  if(!controlled){controlled=true;return;}
+  if(reloading)return;reloading=true;
+  const reloadWhenIdle=()=>{
+   if(listening||voicePending||document.querySelector('dialog[open]')){setTimeout(reloadWhenIdle,1000);return;}
+   try{sessionStorage.setItem('caisse-update-query',$('#query').value);}catch{}
+   location.reload();
+  };
+  reloadWhenIdle();
+ });
+ navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'}).then(registration=>{
+  const update=()=>{if(!document.hidden)registration.update().catch(()=>{});};
+  setInterval(update,10*60*1000);document.addEventListener('visibilitychange',update);
+ }).catch(()=>{});
+}
