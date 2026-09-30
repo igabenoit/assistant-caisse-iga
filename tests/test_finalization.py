@@ -69,3 +69,14 @@ def test_production_filter_hides_fiction_preserving_admin(app,client):
     assert client.get('/api/knowledge/'+docs[0]['id']).status_code==404
     row=client.post('/api/admin/products',headers=H,json={'name':'Réel','code':'000001'}).json
     assert search(client,'000001').json['products'][0]['code']=='000001'
+
+
+def test_each_deployment_changes_worker_bytes(client,monkeypatch):
+    monkeypatch.setenv('RENDER_GIT_COMMIT','build-one')
+    first=client.get('/sw.js')
+    monkeypatch.setenv('RENDER_GIT_COMMIT','build-two')
+    second=client.get('/sw.js')
+    assert first.status_code==second.status_code==200
+    assert first.data!=second.data
+    assert b'build-two' in second.data
+    assert second.headers['Cache-Control']=='no-cache'

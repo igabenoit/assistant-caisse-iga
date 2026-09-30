@@ -309,7 +309,10 @@ def create_app(test_config=None):
     def admin(): return render_template('admin.html')
     @app.get('/sw.js')
     def service_worker():
-        r=send_file(ROOT/'static'/'sw.js',mimetype='application/javascript');r.headers['Cache-Control']='no-cache';return r
+        # A deployment must change the worker bytes even when only app.js changed.
+        build=json.dumps(os.getenv('RENDER_GIT_COMMIT','local'))
+        r=Response('// build: '+build+'\n'+(ROOT/'static'/'sw.js').read_text(encoding='utf-8'),mimetype='application/javascript')
+        r.headers['Cache-Control']='no-cache';return r
     @app.get('/healthz')
     def health():
         with engine.connect() as con: con.execute(text('SELECT 1'))
