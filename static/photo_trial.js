@@ -21,11 +21,12 @@ async function previewPhoto(file){
   const canvas=document.createElement('canvas');canvas.width=Math.round(image.naturalWidth*ratio);canvas.height=Math.round(image.naturalHeight*ratio);
   const context=canvas.getContext('2d');if(!context)throw new Error('L’aperçu est indisponible sur ce navigateur.');
   context.fillStyle='white';context.fillRect(0,0,canvas.width,canvas.height);context.drawImage(image,0,0,canvas.width,canvas.height);
-  const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.85));
+  const isolated=window.photoRecognition.isolateSubject(canvas,text=>{if(current===generation)$('#photo-status').textContent=text;});
+  const blob=await new Promise(resolve=>isolated.toBlob(resolve,'image/jpeg',.85));
   if(current!==generation)return;
   if(!blob)throw new Error('Impossible de préparer cette photo. Essaie une autre photo.');
   photoCanvas=canvas;previewUrl=URL.createObjectURL(blob);$('#trial-image').src=previewUrl;$('#photo-result').classList.remove('hidden');
-  $('#photo-status').textContent='Photo prête. Touche « Reconnaître ce produit ». Aucun envoi de photo n’a été effectué.';
+  $('#photo-status').textContent='Sujet isolé sur fond neutre. Touche « Reconnaître ce produit ». Aucun envoi de photo n’a été effectué.';
  }catch(error){if(current===generation)$('#photo-status').textContent=error.message||'Impossible de préparer cette photo.';}
  finally{if(sourceUrl)URL.revokeObjectURL(sourceUrl);}
 }
