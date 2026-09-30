@@ -286,7 +286,7 @@ def create_app(test_config=None):
         r.headers['Referrer-Policy']='no-referrer'
         r.headers['Permissions-Policy']='microphone=(self), camera=(), geolocation=()'
         r.headers['Content-Security-Policy']="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https: blob:; connect-src 'self'; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
-        if request.path.startswith('/api/') or request.path in ('/','/admin'): r.headers['Cache-Control']='no-store'
+        if request.path.startswith('/api/') or request.path in ('/','/admin','/essai-photo'): r.headers['Cache-Control']='no-store'
         if prod: r.headers['Strict-Transport-Security']='max-age=31536000'
         return r
     @app.errorhandler(ValueError)
@@ -299,6 +299,8 @@ def create_app(test_config=None):
     def internal(e): return jsonify(error='Erreur serveur. Réessaie ou demande au superviseur.'),500
     @app.get('/')
     def home(): return render_template('index.html')
+    @app.get('/essai-photo')
+    def photo_trial(): return render_template('photo_trial.html')
     @app.get('/credits')
     def credits():
         import re, html

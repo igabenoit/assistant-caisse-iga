@@ -2,7 +2,7 @@
 const $=s=>document.querySelector(s);
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const storage={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
-let device=storage.get('caisse-device')||'Ma tablette', revision='', eventId='', source='text', debounce, recordTimer, controller, requestNumber=0, events, poll;
+let device=(storage.get('caisse-device')==='Ma tablette'?'Mon appareil':storage.get('caisse-device'))||'Mon appareil', revision='', eventId='', source='text', debounce, recordTimer, controller, requestNumber=0, events, poll;
 let currentProducts=[], currentQuery='', recognition, listening=false, voiceTimer, voicePending=false, voiceGeneration=0, voiceStartTimer, voiceAvailable=false;
 const REQUEST_TIMEOUT_MS=12000;
 const uid=()=>crypto.randomUUID?crypto.randomUUID():`${Date.now().toString(16).padStart(8,'0').slice(-8)}-0000-4000-8000-${Array.from(crypto.getRandomValues(new Uint8Array(6)),n=>n.toString(16).padStart(2,'0')).join('')}`;
@@ -62,7 +62,7 @@ document.querySelectorAll('[data-query]').forEach(b=>b.addEventListener('click',
 $('#results').addEventListener('click',async e=>{if(e.target.closest('[data-retry]')){refresh();return;}const b=e.target.closest('[data-doc]');if(b){const n=++requestNumber;controller?.abort();controller=new AbortController();pendingResult();try{const d=await api('/api/knowledge/'+b.dataset.doc,{signal:controller.signal});if(n===requestNumber)renderAnswer(d);}catch(err){if(n===requestNumber&&err.name!=='AbortError'){showConnection(err.message);$('#results').innerHTML='<div class="empty">Procédure indisponible. Précise ta recherche ou demande au superviseur.</div>';}}finally{if(n===requestNumber)finishResult();}}});
 function updateDevice(){$('#device-label').textContent=device;}
 $('#device-button').addEventListener('click',()=>{$('#device-name').value=device;$('#device-dialog').showModal();});
-$('#device-form').addEventListener('submit',e=>{e.preventDefault();device=$('#device-name').value.trim()||'Ma tablette';storage.set('caisse-device',device);updateDevice();$('#device-dialog').close();});
+$('#device-form').addEventListener('submit',e=>{e.preventDefault();device=$('#device-name').value.trim()||'Mon appareil';storage.set('caisse-device',device);updateDevice();$('#device-dialog').close();});
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>$('#'+b.dataset.close).close()));
 $('#install-help').addEventListener('click',()=>$('#install-dialog').showModal());
 $('#kiosk-login').addEventListener('submit',async e=>{e.preventDefault();try{await api('/api/login',{method:'POST',body:JSON.stringify({role:'kiosk',password:$('#kiosk-password').value})});$('#kiosk-password').value='';$('#gate').classList.add('hidden');$('#cashier').classList.remove('hidden');await refresh();startSync();}catch(err){$('#gate-error').textContent=err.message;}});
@@ -94,7 +94,7 @@ function startSync(){
  let checking=false;
  poll=setInterval(async()=>{if(document.hidden||checking)return;checking=true;try{const d=await api('/api/revision');if(d.revision!==revision||!$('#connection').classList.contains('hidden')){revision=d.revision;await refresh()}}catch{showConnection('Connexion interrompue. Les résultats affichés peuvent avoir changé.');$('#results').innerHTML='';}finally{checking=false;}},5000);
 }
-window.addEventListener('offline',()=>{clearTimeout(debounce);clearTimeout(recordTimer);cancelVoice('Hors connexion. Utilise le clavier après reconnexion.');controller?.abort();requestNumber++;finishResult();showConnection('Hors connexion. Connecte la tablette à Internet pour vérifier les codes.');$('#results').innerHTML='';stopSync();});
+window.addEventListener('offline',()=>{clearTimeout(debounce);clearTimeout(recordTimer);cancelVoice('Hors connexion. Utilise le clavier après reconnexion.');controller?.abort();requestNumber++;finishResult();showConnection('Hors connexion. Connecte ton appareil à Internet pour vérifier les codes.');$('#results').innerHTML='';stopSync();});
 window.addEventListener('online',()=>{refresh();startSync();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelVoice();stopSync();}else if(!$('#cashier').classList.contains('hidden')){refresh();startSync();}});
 try{const saved=sessionStorage.getItem('caisse-update-query');sessionStorage.removeItem('caisse-update-query');if(saved){$('#query').value=saved;$('#clear-query').classList.remove('hidden');}}catch{}
