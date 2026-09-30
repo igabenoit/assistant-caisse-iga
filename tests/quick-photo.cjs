@@ -1,0 +1,25 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),{JSDOM}=require('jsdom');
+const dom=new JSDOM(fs.readFileSync('templates/index.html','utf8'),{runScripts:'outside-only',url:'https://example.test/',pretendToBeVisual:true}),w=dom.window;
+w.AbortController=AbortController;const images=[],requests=[];
+w.URL.createObjectURL=()=> 'blob:local-photo';w.URL.revokeObjectURL=()=>{};
+w.Image=class{constructor(){this.naturalWidth=1200;this.naturalHeight=800;images.push(this);}set src(v){}};
+w.HTMLCanvasElement.prototype.getContext=()=>({fillRect(){},drawImage(){}});
+w.fetch=async(url,options={})=>{requests.push({url,options});const data=url==='/api/session'?{kiosk_required:false}:url==='/api/search'?{products:[{id:'p',name:'Brocoli',code:'0004060',demo:false}],revision:'r'}:{products:[],revision:'r'};return{ok:true,json:async()=>data};};
+w.photoRecognition={preload:async()=>{},recognize:async()=>[{label:'Brocoli',query:'brocoli'}]};
+w.eval(fs.readFileSync('static/app.js','utf8')+'\nwindow.captureTest=capturePhoto;');
+const tick=()=>new Promise(r=>setImmediate(r));
+(async()=>{
+ await tick();let chooser=0;w.document.querySelector('#quick-photo-file').click=()=>chooser++;
+ w.document.querySelector('#camera').click();assert.equal(chooser,1);
+ const capture=w.captureTest({size:100,type:'image/jpeg'});images.at(-1).onload();await capture;
+ assert.equal(w.document.querySelector('.plu').textContent,'0004060');assert.equal(w.location.pathname,'/');
+ const search=requests.find(r=>r.url==='/api/search');assert.deepEqual(JSON.parse(search.options.body),{query:'brocoli',device:'Mon appareil',record:false});
+ let finish;w.photoRecognition.recognize=()=>new Promise(r=>finish=r);
+ const stale=w.captureTest({size:100,type:'image/jpeg'});images.at(-1).onload();await tick();
+ const input=w.document.querySelector('#query');input.value='autre';input.dispatchEvent(new w.Event('input'));finish([{label:'Banane',query:'banane'}]);await stale;
+ assert.equal(input.value,'autre');assert.ok(!requests.some(r=>r.options.body?.includes('banane')));
+ w.document.querySelector('#clear-query').click();await tick();
+ w.photoRecognition.recognize=async()=>[];const unknown=w.captureTest({size:100,type:'image/jpeg'});images.at(-1).onload();await unknown;
+ assert.match(w.document.querySelector('#results').textContent,/Produit non reconnu/);assert.equal(w.document.querySelector('.plu'),null);
+ dom.window.close();console.log('Quick photo: camera control, automatic same-page exact code, no image upload, stale analysis ignored and unknown image refused passed.');
+})().catch(error=>{console.error(error);dom.window.close();process.exitCode=1;});

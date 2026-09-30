@@ -32,5 +32,5 @@ window.photoRecognition=(()=>{
   const output=tf.tidy(()=>{const pixels=tf.browser.fromPixels(canvas).toFloat();const input=tf.image.resizeBilinear(pixels,[224,224]).div(127.5).sub(1).expandDims(0);return model.predict(input);});
   try{return candidates(await output.data());}finally{output.dispose();}
  }
- return {recognize,candidates};
+ return {recognize,candidates,preload:getModel};
 })();

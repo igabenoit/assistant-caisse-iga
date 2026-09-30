@@ -4,6 +4,7 @@ const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>'
 const storage={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
 let device=(storage.get('caisse-device')==='Ma tablette'?'Mon appareil':storage.get('caisse-device'))||'Mon appareil', revision='', eventId='', source='text', debounce, recordTimer, controller, requestNumber=0, events, poll;
 let currentProducts=[], currentQuery='', recognition, listening=false, voiceTimer, voicePending=false, voiceGeneration=0, voiceStartTimer, voiceAvailable=false;
+let photoPending=false,photoPickerOpen=false,photoGeneration=0,photoQueries=[],photoPickerTimer;
 const REQUEST_TIMEOUT_MS=12000;
 const uid=()=>crypto.randomUUID?crypto.randomUUID():`${Date.now().toString(16).padStart(8,'0').slice(-8)}-0000-4000-8000-${Array.from(crypto.getRandomValues(new Uint8Array(6)),n=>n.toString(16).padStart(2,'0')).join('')}`;
 async function api(url, options={}){
@@ -53,10 +54,10 @@ async function search(record=false){
   renderResult(data);showConnection();if(!listening)$('#voice-status').textContent=source==='voice'?'Résultat de la dictée. Tu peux corriger le texte.':(voiceAvailable?'Tape un produit, un code ou une question.':'Dictée indisponible dans ce navigateur. Utilise le clavier.');
  }catch(e){if(e.name!=='AbortError'&&n===requestNumber){$('#results').innerHTML='<div class="empty"><h3>Connexion indisponible</h3><p>Impossible de vérifier les codes. Ta recherche est conservée.</p><button class="secondary" data-retry>Réessayer</button></div>';showConnection(e.message||'Le serveur est momentanément inaccessible. Réessaie.');}}finally{if(n===requestNumber)finishResult();}
 }
-function inputChanged(){if(listening||voicePending){cancelVoice();}pendingResult();source='text';eventId=uid();clearTimeout(debounce);clearTimeout(recordTimer);controller?.abort();requestNumber++;$('#clear-query').classList.toggle('hidden',!$('#query').value);debounce=setTimeout(()=>search(false),180);recordTimer=setTimeout(()=>{if($('#query').value.trim())search(true)},1100);}
-function submitQuery(q,kind='text'){if(kind!=='voice'&&(listening||voicePending))cancelVoice();clearTimeout(debounce);clearTimeout(recordTimer);$('#query').value=q;source=kind;eventId=uid();$('#clear-query').classList.toggle('hidden',!q);search(true);}
+function inputChanged(){cancelPhoto();if(listening||voicePending){cancelVoice();}pendingResult();source='text';eventId=uid();clearTimeout(debounce);clearTimeout(recordTimer);controller?.abort();requestNumber++;$('#clear-query').classList.toggle('hidden',!$('#query').value);debounce=setTimeout(()=>search(false),180);recordTimer=setTimeout(()=>{if($('#query').value.trim())search(true)},1100);}
+function submitQuery(q,kind='text'){cancelPhoto();if(kind!=='voice'&&(listening||voicePending))cancelVoice();clearTimeout(debounce);clearTimeout(recordTimer);$('#query').value=q;source=kind;eventId=uid();$('#clear-query').classList.toggle('hidden',!q);search(true);}
 $('#query').addEventListener('input',inputChanged);
-$('#search-form').addEventListener('submit',e=>{e.preventDefault();clearTimeout(debounce);clearTimeout(recordTimer);search(true);$('#query').blur();});
+$('#search-form').addEventListener('submit',e=>{e.preventDefault();cancelPhoto();source='text';clearTimeout(debounce);clearTimeout(recordTimer);search(true);$('#query').blur();});
 $('#clear-query').addEventListener('click',()=>{submitQuery('');$('#query').focus();});
 document.querySelectorAll('[data-query]').forEach(b=>b.addEventListener('click',()=>submitQuery(b.dataset.query)));
 $('#results').addEventListener('click',async e=>{if(e.target.closest('[data-retry]')){refresh();return;}const b=e.target.closest('[data-doc]');if(b){const n=++requestNumber;controller?.abort();controller=new AbortController();pendingResult();try{const d=await api('/api/knowledge/'+b.dataset.doc,{signal:controller.signal});if(n===requestNumber)renderAnswer(d);}catch(err){if(n===requestNumber&&err.name!=='AbortError'){showConnection(err.message);$('#results').innerHTML='<div class="empty">Procédure indisponible. Précise ta recherche ou demande au superviseur.</div>';}}finally{if(n===requestNumber)finishResult();}}});
@@ -75,6 +76,7 @@ function setupVoice(){
  $('#mic').setAttribute('aria-pressed','false');
  $('#mic').addEventListener('click',()=>{
   if(listening||voicePending){cancelVoice();return;}
+  cancelPhoto();
   const generation=++voiceGeneration,active=()=>generation===voiceGeneration;
   const rec=new Speech();recognition=rec;rec.lang='fr-CA';rec.continuous=false;rec.interimResults=true;rec.maxAlternatives=1;
   voicePending=true;$('#mic span').textContent='Arrêter';$('#mic').setAttribute('aria-label','Arrêter la dictée');$('#mic').setAttribute('aria-pressed','true');$('#voice-status').textContent='Démarrage du micro… Tu peux arrêter à tout moment.';
@@ -88,13 +90,13 @@ function setupVoice(){
  });
 }
 function stopSync(){events?.close();events=null;clearInterval(poll);poll=null;}
-async function refresh(){if($('#query').value.trim())await search(false);else await home();}
+async function refresh(){if(photoPending||photoPickerOpen)return;if(source==='photo'&&photoQueries.length){await searchPhotoCatalog(photoQueries);return;}if($('#query').value.trim())await search(false);else await home();}
 function startSync(){
  stopSync();
  let checking=false;
- poll=setInterval(async()=>{if(document.hidden||checking)return;checking=true;try{const d=await api('/api/revision');if(d.revision!==revision||!$('#connection').classList.contains('hidden')){revision=d.revision;await refresh()}}catch{showConnection('Connexion interrompue. Les résultats affichés peuvent avoir changé.');$('#results').innerHTML='';}finally{checking=false;}},5000);
+ poll=setInterval(async()=>{if(document.hidden||checking||photoPending||photoPickerOpen)return;checking=true;try{const d=await api('/api/revision');if(d.revision!==revision||!$('#connection').classList.contains('hidden')){revision=d.revision;await refresh()}}catch{showConnection('Connexion interrompue. Les résultats affichés peuvent avoir changé.');$('#results').innerHTML='';}finally{checking=false;}},5000);
 }
-window.addEventListener('offline',()=>{clearTimeout(debounce);clearTimeout(recordTimer);cancelVoice('Hors connexion. Utilise le clavier après reconnexion.');controller?.abort();requestNumber++;finishResult();showConnection('Hors connexion. Connecte ton appareil à Internet pour vérifier les codes.');$('#results').innerHTML='';stopSync();});
+window.addEventListener('offline',()=>{cancelPhoto();clearTimeout(debounce);clearTimeout(recordTimer);cancelVoice('Hors connexion. Utilise le clavier après reconnexion.');controller?.abort();requestNumber++;finishResult();showConnection('Hors connexion. Connecte ton appareil à Internet pour vérifier les codes.');$('#results').innerHTML='';stopSync();});
 window.addEventListener('online',()=>{refresh();startSync();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelVoice();stopSync();}else if(!$('#cashier').classList.contains('hidden')){refresh();startSync();}});
 try{const saved=sessionStorage.getItem('caisse-update-query');sessionStorage.removeItem('caisse-update-query');if(saved){$('#query').value=saved;$('#clear-query').classList.remove('hidden');}}catch{}
@@ -105,7 +107,7 @@ if('serviceWorker' in navigator){
   if(!controlled){controlled=true;return;}
   if(reloading)return;reloading=true;
   const reloadWhenIdle=()=>{
-   if(listening||voicePending||document.querySelector('dialog[open]')){setTimeout(reloadWhenIdle,1000);return;}
+   if(listening||voicePending||photoPending||photoPickerOpen||document.querySelector('dialog[open]')){setTimeout(reloadWhenIdle,1000);return;}
    try{sessionStorage.setItem('caisse-update-query',$('#query').value);}catch{}
    location.reload();
   };
@@ -115,4 +117,57 @@ if('serviceWorker' in navigator){
   const update=()=>{if(!document.hidden)registration.update().catch(()=>{});};
   setInterval(update,10*60*1000);document.addEventListener('visibilitychange',update);
  }).catch(()=>{});
+}
+
+// One camera action, automatic analysis and immediate catalog codes on the same screen.
+function cancelPhoto(){
+ photoGeneration++;photoQueries=[];photoPickerOpen=false;clearTimeout(photoPickerTimer);
+ if(photoPending){controller?.abort();requestNumber++;photoPending=false;finishResult();}
+}
+function closePhotoPicker(){photoPickerOpen=false;clearTimeout(photoPickerTimer);}
+$('#camera').addEventListener('click',()=>{
+ cancelVoice();cancelPhoto();clearTimeout(debounce);clearTimeout(recordTimer);photoPickerOpen=true;
+ photoPickerTimer=setTimeout(closePhotoPicker,120000);
+ // Warm the model while the employee takes the photo; no photo is uploaded.
+ window.photoRecognition?.preload?.().catch(()=>{});
+ const input=$('#quick-photo-file');input.value='';input.click();
+});
+$('#quick-photo-file').addEventListener('cancel',closePhotoPicker);
+$('#quick-photo-file').addEventListener('change',event=>{closePhotoPicker();if(event.target.files[0])capturePhoto(event.target.files[0]);});
+async function searchPhotoCatalog(queries){
+ const n=++requestNumber;controller?.abort();controller=new AbortController();photoPending=true;photoQueries=queries;source='photo';pendingResult();
+ $('#query').value=queries.map(q=>q.label).join(' / ');$('#clear-query').classList.remove('hidden');
+ try{
+  const responses=await Promise.all(queries.map(q=>api('/api/search',{method:'POST',signal:controller.signal,body:JSON.stringify({query:q.query,device,record:false})})));
+  if(n!==requestNumber)return;
+  revision=responses[0]?.revision||revision;
+  const products=[...new Map(responses.flatMap(d=>d.products||[]).filter(p=>!p.demo).map(p=>[p.id||p.code,p])).values()];
+  showConnection();
+  if(!products.length){$('#results-title').textContent='Photo non identifiée';$('#results-count').textContent='';$('#results').innerHTML='<div class="empty"><h3>Aucun code trouvé</h3><p>Essaie le nom du produit ou demande au superviseur.</p></div>';return;}
+  renderProducts(products);$('#results-title').textContent=products.length===1?'Suggestion photo':'Codes possibles';
+  const note=document.createElement('p');note.className='photo-match-note';note.textContent=products.length===1?'Vérifie que le nom correspond à ton produit.':'Vérifie la variété et la mention bio : la photo ne permet pas de choisir un seul code.';$('#results').prepend(note);
+  $('#voice-status').textContent=products.length===1?'Photo analysée · Code du catalogue ci-dessous.':'Photo analysée · Les codes sont affichés ci-dessous.';
+ }catch(error){if(n===requestNumber&&error.name!=='AbortError'){$('#results').innerHTML='<div class="empty"><h3>Catalogue indisponible</h3><p>Impossible de vérifier le code. Réessaie.</p><button class="secondary" data-retry>Réessayer</button></div>';showConnection(error.message);}}
+ finally{if(n===requestNumber){photoPending=false;finishResult();}}
+}
+async function capturePhoto(file){
+ cancelPhoto();cancelVoice();clearTimeout(debounce);clearTimeout(recordTimer);controller?.abort();
+ const current=++photoGeneration,n=++requestNumber,active=()=>current===photoGeneration&&n===requestNumber;
+ photoPending=true;pendingResult();$('#results-title').textContent='Reconnaissance photo';$('#voice-status').textContent='Préparation de la photo…';
+ let url;
+ try{
+  if(file.size>20*1024*1024)throw Error('Photo trop volumineuse. Réduis la résolution puis réessaie.');
+  if(file.type&&!file.type.startsWith('image/'))throw Error('Choisis une image JPG, PNG ou WebP.');
+  url=URL.createObjectURL(file);const image=new Image();
+  await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(Error('Photo illisible. Reprends la photo ou utilise le nom.'));image.src=url;});
+  if(!active())return;
+  if(!image.naturalWidth||!image.naturalHeight||image.naturalWidth*image.naturalHeight>50000000)throw Error('Photo trop grande. Réduis la résolution puis réessaie.');
+  const ratio=Math.min(1,640/Math.max(image.naturalWidth,image.naturalHeight)),canvas=document.createElement('canvas');canvas.width=Math.round(image.naturalWidth*ratio);canvas.height=Math.round(image.naturalHeight*ratio);
+  const context=canvas.getContext('2d');if(!context)throw Error('La photo est indisponible dans ce navigateur. Utilise le nom.');context.fillStyle='white';context.fillRect(0,0,canvas.width,canvas.height);context.drawImage(image,0,0,canvas.width,canvas.height);
+  const candidates=await window.photoRecognition.recognize(canvas,text=>{if(active())$('#voice-status').textContent=text;});
+  if(!active())return;
+  if(!candidates.length)throw Error('Produit non reconnu. Essaie le nom ou reprends la photo sur un fond simple.');
+  await searchPhotoCatalog(candidates);
+ }catch(error){if(active()){$('#results-title').textContent='Photo non identifiée';$('#results-count').textContent='';$('#results').replaceChildren();const box=document.createElement('div');box.className='empty';box.textContent=error.message||'Analyse indisponible. Utilise le nom du produit.';$('#results').append(box);$('#voice-status').textContent='Réessaie avec Photo, Parler ou le clavier.';}}
+ finally{if(url)URL.revokeObjectURL(url);if(active()){photoPending=false;finishResult();}}
 }
