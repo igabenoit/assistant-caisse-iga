@@ -36,7 +36,7 @@ def create_app(test_config=None):
     if url.startswith('sqlite:'): (ROOT/'instance').mkdir(exist_ok=True)
     engine=create_engine(url,pool_pre_ping=True,connect_args={'check_same_thread':False,'timeout':20} if url.startswith('sqlite') else {})
     metadata.create_all(engine)
-    app.config.update(SECRET_KEY=secret,MAX_CONTENT_LENGTH=6*1024*1024,SESSION_COOKIE_HTTPONLY=True,SESSION_COOKIE_SAMESITE='Strict',SESSION_COOKIE_SECURE=prod,PERMANENT_SESSION_LIFETIME=timedelta(days=30))
+    app.config.update(HIDE_DEMO=prod,SECRET_KEY=secret,MAX_CONTENT_LENGTH=6*1024*1024,SESSION_COOKIE_HTTPONLY=True,SESSION_COOKIE_SAMESITE='Strict',SESSION_COOKIE_SECURE=prod,PERMANENT_SESSION_LIFETIME=timedelta(days=30))
     if test_config: app.config.update(test_config)
     if prod: app.wsgi_app=ProxyFix(app.wsgi_app,x_for=1,x_proto=1,x_host=0)
     app.extensions['db']=engine
@@ -322,6 +322,8 @@ def create_app(test_config=None):
         if kind not in ('admin','kiosk'): raise ValueError('Rôle invalide.')
         stamp=int(time.time()); bucket=hmac.new(secret.encode(),(request.remote_addr or 'unknown').encode(),hashlib.sha256).hexdigest()
         with engine.begin() as con:
+            if engine.dialect.name=='postgresql': con.execute(text('SELECT pg_advisory_xact_lock(:bucket)'),{'bucket':int(bucket[:15],16)})
+            elif engine.dialect.name=='sqlite': con.exec_driver_sql('BEGIN IMMEDIATE')
             con.execute(delete(attempts).where(attempts.c.time<stamp-900))
             if con.execute(select(func.count()).select_from(attempts).where(attempts.c.bucket==bucket)).scalar()>=8:
                 return jsonify(error='Trop de tentatives. Réessaie dans 15 minutes.'),429
@@ -344,8 +346,8 @@ def create_app(test_config=None):
     def search():
         data=body(); q=string(data,'query',500,True); device=string(data,'device',80) or 'Tablette non nommée'
         with engine.connect() as con:
-            ps=[dict(x) for x in con.execute(select(products).where(products.c.active==True)).mappings()]
-            ks=[dict(x) for x in con.execute(select(knowledge).where(knowledge.c.active==True)).mappings()]
+            ps=[dict(x) for x in con.execute(select(products).where(products.c.active==True,products.c.demo==False if app.config['HIDE_DEMO'] else True)).mappings()]
+            ks=[dict(x) for x in con.execute(select(knowledge).where(knowledge.c.active==True,knowledge.c.demo==False if app.config['HIDE_DEMO'] else True)).mappings()]
             rev=revision(con)
         result=resolve(q,ps,ks); result['revision']=rev
         if data.get('record') is True:
@@ -366,14 +368,20 @@ def create_app(test_config=None):
     @allowed()
     def catalog():
         with engine.connect() as con:
-            rows=[dict(x) for x in con.execute(select(products).where(products.c.active==True)).mappings()]
+            rows=[dict(x) for x in con.execute(select(products).where(products.c.active==True,products.c.demo==False if app.config['HIDE_DEMO'] else True)).mappings()]
             rows.sort(key=lambda row:(normalize(row['name']),row['code']))
             demo_count=sum(p['demo'] for p in rows)
-            return jsonify(products=rows[:40],total=len(rows),demo_count=demo_count,revision=revision(con))
+            featured_names=['banane','avocat','tomate','concombre','brocoli','citron','lime','pomme royal gala','laitue iceberg']
+            featured=[]
+            for name in featured_names:
+                matches=[p for p in rows if normalize(p['name'])==name and not p['demo']]
+                if len(matches)==1: featured.extend(matches)
+            if not featured: featured=rows[:9]
+            return jsonify(products=rows[:40],featured=featured,total=len(rows),demo_count=demo_count,revision=revision(con))
     @app.get('/api/knowledge/<id>')
     @allowed()
     def get_knowledge(id):
-        with engine.connect() as con: row=con.execute(select(knowledge).where(knowledge.c.id==id,knowledge.c.active==True)).mappings().first()
+        with engine.connect() as con: row=con.execute(select(knowledge).where(knowledge.c.id==id,knowledge.c.active==True,knowledge.c.demo==False if app.config['HIDE_DEMO'] else True)).mappings().first()
         if not row: return jsonify(error=UNKNOWN),404
         return jsonify(dict(row))
     @app.get('/api/revision')
@@ -459,7 +467,11 @@ def create_app(test_config=None):
             img=Image.open(io.BytesIO(raw))
             if img.width*img.height>20_000_000: raise ValueError('Image trop grande (maximum 20 mégapixels).')
             from PIL import ImageOps
-            img=ImageOps.exif_transpose(img).convert('RGB');img.thumbnail((900,900))
+            img=ImageOps.exif_transpose(img)
+            if img.mode in ('RGBA','LA') or 'transparency' in img.info:
+                rgba=img.convert('RGBA');background=Image.new('RGB',img.size,'white');background.paste(rgba,mask=rgba.getchannel('A'));img=background
+            else: img=img.convert('RGB')
+            img.thumbnail((900,900))
             out=io.BytesIO();img.save(out,'JPEG',quality=85)
         except (UnidentifiedImageError,OSError,Image.DecompressionBombError): raise ValueError('Image invalide. Utilise JPG, PNG ou WebP.')
         id=str(uuid.uuid4())
@@ -498,7 +510,7 @@ def create_app(test_config=None):
                 if old and mode=='add': skipped+=1;continue
                 if old:
                     # Missing optional columns never erase existing images or synonyms.
-                    for k in ['keywords','category','image','note']:
+                    for k in ['keywords','category','image','note','active','demo']:
                         if k not in original: row[k]=old[k]
                     con.execute(update(products).where(products.c.id==old['id']).values(**row));updated+=1
                 else: con.execute(insert(products).values(id=str(uuid.uuid4()),**row));created+=1

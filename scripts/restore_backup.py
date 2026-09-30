@@ -11,7 +11,7 @@ from caisse.models import products,knowledge,images,settings
 from sqlalchemy import select,insert,update,func
 
 def restore(path):
-    data=json.loads(Path(path).read_text())
+    data=json.loads(Path(path).read_text(encoding='utf-8'))
     if data.get('schema_version')!=1: raise ValueError('Version de sauvegarde non reconnue.')
     app=create_app();engine=app.extensions['db']
     with engine.begin() as con:

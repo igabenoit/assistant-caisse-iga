@@ -2,7 +2,7 @@
 
 V1 fonctionnelle : recherche rapide de produits et codes, dictée volontaire, procédures enregistrées, administration protégée, import Excel/CSV et base partagée. Aucun service IA payant requis.
 
-**Les 26 produits et 4 procédures fournis sont DEMO. Les codes D001 à D026 sont fictifs. Ne pas les utiliser pour facturer.** Les photos sont représentatives; elles ne valident ni le format ni la variété réelle du magasin.
+Le catalogue embarqué compte 555 fiches de produits. Les corrections enregistrées par la direction restent prioritaires. Les 26 anciens produits D001 à D026 et les 4 procédures de démonstration sont fictifs : ils restent dans l’administration, mais sont exclus de la caisse en production. Une photo ne certifie pas à elle seule la variété, le format ou le statut biologique.
 
 ## Démarrage local
 
@@ -61,8 +61,8 @@ Une option désactive les produits DEMO après import. Les procédures DEMO doiv
 
 - **Flask / Python + SQLAlchemy** : un seul service simple. HTML/CSS/JavaScript natifs; pas de chaîne de compilation du frontend.
 - **PostgreSQL en production** : produits, procédures, photos téléversées, sessions, journaux et révision centrale. Aucun code important stocké uniquement dans le navigateur. SQLite sert uniquement au développement et aux tests locaux.
-- **Photos** : 26 images initiales intégrées dans le dépôt; nouvelles photos normalisées en JPEG et stockées en base. URLs HTTPS externes également possibles. Aucun téléchargement automatique côté serveur lors d'une recherche.
-- **Synchronisation** : SSE vérifie la révision centrale chaque seconde; l'écran courant se recharge à la modification. Contrôle de secours toutes les 5 secondes, reconnexion au retour sur l'écran. Les changements sont lus à la recherche suivante même si SSE est indisponible. Latence réseau en sus.
+- **Photos** : photos du catalogue intégrées dans le dépôt; nouvelles photos normalisées en JPEG et stockées en base. URLs HTTPS externes également possibles. Aucun téléchargement automatique côté serveur lors d'une recherche.
+- **Synchronisation** : interrogation de la révision centrale toutes les 5 secondes, sans connexion longue par tablette. Actualisation au retour sur l’écran et à chaque nouvelle recherche. Latence réseau en sus.
 - **Recherche produit** : accents, pluriels simples, synonymes, préfixes et petites fautes. Tous les mots significatifs doivent correspondre. Une recherche précise `banane bio` ne retourne pas la banane conventionnelle.
 - **Procédures** : recherche prudente sur le sujet et les formulations enregistrées, normalisation et synonymes courants. Le texte enregistré est renvoyé sans reformulation. Les qualificatifs inconnus empêchent une réponse trop large. En cas d'ambiguïté, l'utilisateur choisit le sujet. Ce moteur ne comprend pas toutes les paraphrases : enrichir les formulations depuis les recherches sans résultat.
 - **IA future** : point d'extension `caisse/search.py::resolve`. Un éventuel modèle peut sélectionner des identifiants de procédures approuvées; le serveur doit valider les identifiants, l'état actif, la confiance et renvoyer les textes officiels. Il ne doit jamais inventer des étapes. Pas de clé IA ni d'appel IA en V1.
@@ -114,3 +114,16 @@ Essais supplémentaires des parcours JavaScript (sans microphone physique) : `np
 Les tests couvrent recherche, refus, isolation bio, CRUD, données partagées, conflits, import transactionnel, XLSX, zéros initiaux, photos, journaux et authentification. La CI GitHub ajoute un essai PostgreSQL isolé. Le micro réel doit être validé sur l'iPad et les tablettes Android après déploiement; sa disponibilité dépend du navigateur, d'iPadOS/Android et des permissions.
 
 Crédits des photos : [docs/PHOTOS.md](docs/PHOTOS.md) et `data/image-credits.json`. Ne pas supprimer ces attributions.
+
+
+## Révision du 29 septembre 2026
+
+Le catalogue fourni contient 555 fiches réelles, en plus des exemples historiques. Les codes existants et les modifications de gestion priment sur les données embarquées. En production, les fiches marquées DEMO restent administrables et sauvegardables, mais ne sont plus proposées à la caisse. Aucune fiche n'est supprimée par cette révision.
+
+Les noms exacts précèdent les variétés et synonymes; les codes conservent leurs zéros et leur ponctuation. Les noms ambigus restent séparés, avec un avis demandant de vérifier le format. Les photos manquantes ont un emplacement explicite; aucune image approximative n'est ajoutée. Les imports ne réactivent plus une fiche masquée et conservent les champs facultatifs absents.
+
+Les tablettes consultent la révision toutes les 5 secondes, sans ouvrir chacune une connexion longue qui monopolise un fil serveur. La dictée peut être arrêtée pendant son démarrage; ses anciens événements sont ignorés. Le démarrage est limité à 8 secondes, l'écoute à 15 secondes. Le clavier reste disponible. La PWA autorise les deux orientations et n'enregistre aucun code ni procédure pour consultation hors ligne.
+
+Validation : tests serveur sur SQLite et dans la CI PostgreSQL, 1 110 recherches exactes sur le catalogue fourni, parcours DOM sur serveur local, scénarios de panne et de concurrence. Commandes supplémentaires : `node tests/faults.cjs`, `node tests/admin-races.cjs`, `node tests/pwa.cjs`. Les tests vocaux sont simulés; ils ne certifient pas Safari sur un iPad physique.
+
+Retour arrière : redéployer le commit `936542dcce886065743d6fd3b4f6fdf702d7e807` dans Render, sans restaurer ni remplacer PostgreSQL. Cette livraison n'ajoute ni migration ni correction de données. Les sauvegardes de données exigent une session gérant; le script de restauration refuse une base non vide. Conserver aussi les images statiques du même commit avec la sauvegarde JSON.

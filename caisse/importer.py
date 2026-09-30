@@ -54,7 +54,6 @@ def _parse_file(file):
         if not code or not item.get('name'): errors.append(f'Ligne {i} : nom ou code manquant.'); continue
         if code in seen: errors.append(f'Ligne {i} : code {code} en double.'); continue
         seen.add(code)
-        item.update(demo=False,active=True)
         result.append(item)
     if len(result)>10000: errors.append('Maximum 10 000 produits par import.')
     if errors: raise ValueError('\n'.join(errors[:30]))

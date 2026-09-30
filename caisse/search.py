@@ -4,6 +4,7 @@ A future intent resolver may return verified document IDs, never its own answer.
 import re
 import unicodedata
 from difflib import SequenceMatcher
+from functools import lru_cache
 
 UNKNOWN = "Je n’ai pas cette information. Demande au superviseur."
 STOP = set('le la les l j un une des de du d au aux a et est c ce ces cet cette quoi quel quelle quels quelles je tu il elle on nous vous ils elles me mon ma mes pour comment faire fais fait faut faire peux peut puis dois doit que qui en avec dans sur svp stp s y ai as avez il merci si mais indique affiche produit code plu acheter vend vendre voudrais veux cherche rechercher trouve trouver appelle appeler'.split())
@@ -22,6 +23,7 @@ def tokens(s, stop=True):
         result.append(w)
     return result
 
+@lru_cache(maxsize=32768)
 def sim(a,b,partial=False):
     if a==b: return 1.0
     # A guessed digit could change a package size or a code.
@@ -32,22 +34,36 @@ def sim(a,b,partial=False):
         if r>=0.78: return r*0.92
     return 0
 
+@lru_cache(maxsize=16384)
+def product_words(name, keywords, category):
+    return tuple(tokens(name+' '+keywords+' '+category))
+
 def product_results(query, products):
+    # Preserve punctuation and leading zeroes: A-1 and A.1 are distinct codes.
+    raw=query.strip()
+    for code_query in [raw,re.sub(r'^(?:code|plu)(?:\s*[:#]\s*|\s+)', '', raw, flags=re.I)]:
+        exact=[p for p in products if p['code']==code_query]
+        if not exact: exact=[p for p in products if p['code'].casefold()==code_query.casefold()]
+        if exact: return sorted(exact,key=lambda p:p['name'])
     q=tokens(query)
     if not q: return []
     ranked=[]
     for p in products:
-        if normalize(query)==normalize(p['code']) or q==[normalize(p['code'])]: ranked.append((2,2,p)); continue
-        words=tokens(p['name']+' '+p['keywords']+' '+p['category'])
-        scores=[max((sim(t,w,True) for w in words),default=0) for t in q]
-        # Every meaningful token must match. "banane bio" must not return conventional bananas.
-        if min(scores,default=0)>=0.70:
-            ranked.append((min(scores),sum(scores)/len(scores),p))
-    # Prefer literal/prefix matches as a group. An exact "ananas" must not
-    # also offer "banana" solely because of a fuzzy spelling similarity.
-    if any(minimum>=.94 for minimum,_,_ in ranked):
-        ranked=[r for r in ranked if r[0]>=.94]
-    return [p for _,_,p in sorted(ranked,key=lambda x:(-x[1],x[2]['name']))][:40]
+        if q==[p['code'].casefold()]: ranked.append((3,2,2,p)); continue
+        words=product_words(p['name'],p['keywords'],p['category'])
+        scores=[]
+        for t in q:
+            score=max((sim(t,w,True) for w in words),default=0)
+            if score<.70: break
+            scores.append(score)
+        if len(scores)!=len(q): continue
+        name_tokens=tokens(p['name'])
+        priority=2 if normalize(query)==normalize(p['name']) else 1 if q==name_tokens else 0
+        ranked.append((priority,min(scores),sum(scores)/len(scores),p))
+    # Exact names precede varieties/keywords. Never guess a digit or omit bio.
+    if any(minimum>=.94 for _,minimum,_,_ in ranked):
+        ranked=[r for r in ranked if r[1]>=.94]
+    return [p for _,_,_,p in sorted(ranked,key=lambda x:(-x[0],-x[2],normalize(x[3]['name']),x[3]['code']))][:40]
 
 def knowledge_results(query, documents):
     q=tokens(query)

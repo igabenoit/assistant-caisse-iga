@@ -67,7 +67,7 @@ function submit(dom,id){dom.window.document.querySelector(id).dispatchEvent(new 
  const voiced=await page('/',true);const v=voiced.window.document;await wait(()=>v.querySelectorAll('.product').length>0,'page vocal');v.querySelector('#mic').click();assert(v.querySelector('#voice-status').textContent.includes('Écoute'));
  const result=[{transcript:'gingembre'}];result.isFinal=true;voiced.window.testSpeech.onresult({resultIndex:0,results:[result]});
  await wait(()=>v.querySelector('.plu')?.textContent==='D018','transcription vers recherche');
- voiced.window.testSpeech.onerror({error:'not-allowed'});assert(v.querySelector('#voice-status').textContent.includes('Microphone refusé'));
+ v.querySelector('#mic').click();voiced.window.testSpeech.onerror({error:'not-allowed'});assert(v.querySelector('#voice-status').textContent.includes('Microphone refusé'));
  assert.deepEqual(errors,[]);
  // Clean disposable UI-created rows via authenticated application endpoints.
  for(const kind of ['products','knowledge']){const r=await admin.window.fetch('/api/admin/'+kind);const rows=(await r.json()).items;for(const row of rows.filter(r=>r.code==='UI001'||r.title==='Étiquette test'))await admin.window.fetch('/api/admin/'+kind+'/'+row.id,{method:'DELETE',headers:{'X-App-Request':'1','Content-Type':'application/json'},body:JSON.stringify({expected_updated_at:row.updated_at})});}

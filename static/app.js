@@ -3,7 +3,7 @@ const $=s=>document.querySelector(s);
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const storage={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
 let device=storage.get('caisse-device')||'Ma tablette', revision='', eventId='', source='text', debounce, recordTimer, controller, requestNumber=0, events, poll;
-let currentProducts=[], currentQuery='', recognition, listening=false, voiceTimer, voicePending=false;
+let currentProducts=[], currentQuery='', recognition, listening=false, voiceTimer, voicePending=false, voiceGeneration=0, voiceStartTimer, voiceAvailable=false;
 const REQUEST_TIMEOUT_MS=12000;
 const uid=()=>crypto.randomUUID?crypto.randomUUID():`${Date.now().toString(16).padStart(8,'0').slice(-8)}-0000-4000-8000-${Array.from(crypto.getRandomValues(new Uint8Array(6)),n=>n.toString(16).padStart(2,'0')).join('')}`;
 async function api(url, options={}){
@@ -12,17 +12,19 @@ async function api(url, options={}){
  if(callerSignal?.aborted)cancel();else callerSignal?.addEventListener('abort',cancel,{once:true});
  const timer=setTimeout(()=>{timedOut=true;timeoutController.abort();},REQUEST_TIMEOUT_MS);
  try{const response=await fetch(url,{credentials:'same-origin',cache:'no-store',...options,signal:timeoutController.signal,headers:{'X-App-Request':'1',...(options.body?{'Content-Type':'application/json'}:{}),...options.headers}});
- const data=await response.json();
+ let data;try{data=await response.json();}catch{throw new Error('Le serveur est momentanément indisponible. Réessaie.');}
  if(!response.ok){if(response.status===401){stopSync();$('#cashier').classList.add('hidden');$('#gate').classList.remove('hidden');}throw new Error(data.error||'Le serveur ne répond pas.');}
  return data;
  }catch(e){if(timedOut)throw new Error('Le serveur met trop de temps à répondre. Réessaie.');throw e;}finally{clearTimeout(timer);callerSignal?.removeEventListener('abort',cancel);}
 }
 function showConnection(message=''){$('#connection').textContent=message;$('#connection').classList.toggle('hidden',!message);$('#sync-status').textContent=message?'Connexion interrompue':'Base centrale · À jour';}
 const mixedVarietyPhotos=new Set(['/static/images/demo-23.jpg','/static/images/demo-24.jpg','/static/images/demo-25.jpg']);
-function imageHtml(p){if(mixedVarietyPhotos.has(p.image))return '<span class="placeholder">Photo de cette variété à ajouter</span>';return p.image?`<img src="${escape(p.image)}" alt="${escape(p.name)}" loading="lazy">`:'<span class="placeholder" aria-label="Photo non fournie">◉</span>';}
+function imageHtml(p){if(mixedVarietyPhotos.has(p.image))return '<span class="placeholder">Photo de cette variété à ajouter</span>';return p.image?`<img src="${escape(p.image)}" alt="${escape(p.name)}" loading="lazy" decoding="async" width="480" height="480">`:'<span class="placeholder">Photo à ajouter</span>';}
 function renderProducts(items,home=false){
- $('#results-title').textContent=home?'À portée de main':'Produits trouvés';$('#results-count').textContent=`${items.length} produit${items.length>1?'s':''}`;
+ $('#results-title').textContent=home?'Produits courants':'Produits trouvés';$('#results-count').textContent=`${items.length} produit${items.length>1?'s':''}`;
  $('#results').innerHTML=`<div class="grid ${items.length===1?'single':''}">${items.map(p=>`<article class="product"><div class="product-photo">${p.demo?'<span class="demo-tag">DÉMO</span>':''}${imageHtml(p)}</div><div class="product-body"><span class="product-category">${escape(p.category||'Produit')}</span><h3>${escape(p.name)}</h3><span class="code-label">${p.demo?'CODE FICTIF · DÉMO':'CODE / PLU'}</span><strong class="plu">${escape(p.code)}</strong><p class="product-note">${escape(p.note||'')}</p></div></article>`).join('')}</div>`;
+ const names=items.map(p=>p.name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim());
+ if(!home&&new Set(names).size<names.length){const note=document.createElement('p');note.className='ambiguity-note';note.textContent='Plusieurs codes portent le même nom. Vérifie la variété ou le format avec le superviseur avant de choisir.';$('#results').prepend(note);}
  $('#results').querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>{img.replaceWith(Object.assign(document.createElement('span'),{className:'placeholder',textContent:'Photo indisponible'}));},{once:true}));
 }
 function renderAnswer(d){$('#results-title').textContent='Réponse du magasin';$('#results-count').textContent='Procédure enregistrée';$('#results').innerHTML=`<article class="answer">${d.demo?'<span class="demo-tag">PROCÉDURE DÉMO</span>':'<span class="badge">Réponse officielle enregistrée</span>'}<h3>${escape(d.title)}</h3><div class="answer-text">${escape(d.answer)}</div><p class="answer-source">Source : base du magasin · Dernière modification le ${new Date(d.updated_at).toLocaleDateString('fr-CA')} ${d.demo?'· Exemple fictif':''}</p></article>`;}
@@ -38,7 +40,7 @@ function pendingResult(){ $('#results-title').textContent='Recherche en cours…
 function finishResult(){ $('#results').setAttribute('aria-busy','false'); }
 async function home(){
  const n=++requestNumber;controller?.abort();controller=new AbortController();pendingResult();
- try{const data=await api('/api/catalog',{signal:controller.signal});if(n!==requestNumber||$('#query').value.trim())return;revision=data.revision;currentProducts=data.products;renderProducts(currentProducts.slice(0,9),true);showConnection();}catch(e){if(n===requestNumber&&e.name!=='AbortError'){showConnection('Connexion indisponible. Les codes à jour ne peuvent pas être affichés.');$('#results').innerHTML='<div class="empty"><h3>Catalogue indisponible</h3><button class="secondary" data-retry>Réessayer</button></div>';}}finally{if(n===requestNumber)finishResult();}
+ try{const data=await api('/api/catalog',{signal:controller.signal});if(n!==requestNumber||$('#query').value.trim())return;revision=data.revision;currentProducts=data.products;renderProducts((data.featured||currentProducts).slice(0,9),true);showConnection();}catch(e){if(n===requestNumber&&e.name!=='AbortError'){showConnection('Connexion indisponible. Les codes à jour ne peuvent pas être affichés.');$('#results').innerHTML='<div class="empty"><h3>Catalogue indisponible</h3><button class="secondary" data-retry>Réessayer</button></div>';}}finally{if(n===requestNumber)finishResult();}
 }
 async function search(record=false){
  const query=$('#query').value.trim();
@@ -48,11 +50,11 @@ async function search(record=false){
  try{
   const data=await api('/api/search',{method:'POST',signal:controller.signal,body:JSON.stringify({query,device,source,event_id:id,record})});
   if(n!==requestNumber||query!==$('#query').value.trim())return;
-  renderResult(data);showConnection();if(!listening)$('#voice-status').textContent=source==='voice'?'Résultat de la dictée. Tu peux corriger le texte.':'Tape un produit, un code ou une question.';
+  renderResult(data);showConnection();if(!listening)$('#voice-status').textContent=source==='voice'?'Résultat de la dictée. Tu peux corriger le texte.':(voiceAvailable?'Tape un produit, un code ou une question.':'Dictée indisponible dans ce navigateur. Utilise le clavier.');
  }catch(e){if(e.name!=='AbortError'&&n===requestNumber){$('#results').innerHTML='<div class="empty"><h3>Connexion indisponible</h3><p>Impossible de vérifier les codes. Ta recherche est conservée.</p><button class="secondary" data-retry>Réessayer</button></div>';showConnection(e.message||'Le serveur est momentanément inaccessible. Réessaie.');}}finally{if(n===requestNumber)finishResult();}
 }
-function inputChanged(){if(listening||voicePending){recognition?.abort();stopVoice();}pendingResult();source='text';eventId=uid();clearTimeout(debounce);clearTimeout(recordTimer);controller?.abort();requestNumber++;$('#clear-query').classList.toggle('hidden',!$('#query').value);debounce=setTimeout(()=>search(false),180);recordTimer=setTimeout(()=>{if($('#query').value.trim())search(true)},1100);}
-function submitQuery(q,kind='text'){clearTimeout(debounce);clearTimeout(recordTimer);$('#query').value=q;source=kind;eventId=uid();$('#clear-query').classList.toggle('hidden',!q);search(true);}
+function inputChanged(){if(listening||voicePending){cancelVoice();}pendingResult();source='text';eventId=uid();clearTimeout(debounce);clearTimeout(recordTimer);controller?.abort();requestNumber++;$('#clear-query').classList.toggle('hidden',!$('#query').value);debounce=setTimeout(()=>search(false),180);recordTimer=setTimeout(()=>{if($('#query').value.trim())search(true)},1100);}
+function submitQuery(q,kind='text'){if(kind!=='voice'&&(listening||voicePending))cancelVoice();clearTimeout(debounce);clearTimeout(recordTimer);$('#query').value=q;source=kind;eventId=uid();$('#clear-query').classList.toggle('hidden',!q);search(true);}
 $('#query').addEventListener('input',inputChanged);
 $('#search-form').addEventListener('submit',e=>{e.preventDefault();clearTimeout(debounce);clearTimeout(recordTimer);search(true);$('#query').blur();});
 $('#clear-query').addEventListener('click',()=>{submitQuery('');$('#query').focus();});
@@ -64,27 +66,36 @@ $('#device-form').addEventListener('submit',e=>{e.preventDefault();device=$('#de
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>$('#'+b.dataset.close).close()));
 $('#install-help').addEventListener('click',()=>$('#install-dialog').showModal());
 $('#kiosk-login').addEventListener('submit',async e=>{e.preventDefault();try{await api('/api/login',{method:'POST',body:JSON.stringify({role:'kiosk',password:$('#kiosk-password').value})});$('#kiosk-password').value='';$('#gate').classList.add('hidden');$('#cashier').classList.remove('hidden');await home();startSync();}catch(err){$('#gate-error').textContent=err.message;}});
-function stopVoice(){clearTimeout(voiceTimer);listening=false;voicePending=false;$('#mic').classList.remove('listening');$('#mic span').textContent='Parler';$('#mic').setAttribute('aria-label','Dicter une recherche');}
+function stopVoice(){voiceGeneration++;clearTimeout(voiceTimer);clearTimeout(voiceStartTimer);listening=false;voicePending=false;$('#mic').classList.remove('listening');$('#mic span').textContent='Parler';$('#mic').setAttribute('aria-label','Dicter une recherche');$('#mic').setAttribute('aria-pressed','false');}
+function cancelVoice(message='Écoute arrêtée.'){const old=recognition;stopVoice();try{old?.abort();}catch{}$('#voice-status').textContent=message;}
 function setupVoice(){
  const Speech=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!Speech||!window.isSecureContext){$('#mic').disabled=true;$('#voice-status').textContent='Dictée indisponible dans ce navigateur. Utilise le clavier.';return;}
- recognition=new Speech();recognition.lang='fr-CA';recognition.continuous=false;recognition.interimResults=true;recognition.maxAlternatives=1;
- recognition.onstart=()=>{voicePending=false;listening=true;$('#mic').classList.add('listening');$('#mic span').textContent='Arrêter';$('#mic').setAttribute('aria-label','Arrêter la dictée');$('#voice-status').textContent='Écoute… dis un produit ou une question.';voiceTimer=setTimeout(()=>{recognition.abort();stopVoice();$('#voice-status').textContent='Écoute terminée après 15 secondes. Réessaie ou utilise le clavier.';},15000);};
- recognition.onspeechend=()=>{$('#voice-status').textContent='Traitement…';recognition.stop();};
- recognition.onresult=e=>{if(!listening&&!voicePending)return;let interim='';for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal){stopVoice();submitQuery(t,'voice');}else interim+=t;}if(interim)$('#voice-status').textContent='Écoute… '+interim;};
- recognition.onerror=e=>{stopVoice();const msgs={'not-allowed':'Microphone refusé. Autorise le micro dans les réglages du navigateur, ou tape ta recherche.','service-not-allowed':'La dictée n’est pas autorisée. Utilise le clavier.','no-speech':'Aucune parole entendue. Réessaie ou utilise le clavier.','audio-capture':'Aucun microphone disponible. Utilise le clavier.','network':'Le service de dictée est indisponible. Utilise le clavier.','aborted':'Écoute arrêtée.'};$('#voice-status').textContent=msgs[e.error]||'Dictée indisponible. Utilise le clavier.';};
- recognition.onend=()=>{const wasListening=listening;stopVoice();if(wasListening)$('#voice-status').textContent='Écoute terminée. Tu peux réessayer ou taper ta recherche.';};
- $('#mic').addEventListener('click',()=>{if(listening||voicePending){recognition.abort();stopVoice();return;}try{voicePending=true;$('#voice-status').textContent='Démarrage du micro…';recognition.start();}catch{stopVoice();$('#voice-status').textContent='Impossible de démarrer la dictée. Utilise le clavier.';}});
+ voiceAvailable=Boolean(Speech&&window.isSecureContext);
+ if(!voiceAvailable){$('#mic').disabled=true;$('#voice-status').textContent='Dictée indisponible dans ce navigateur. Utilise le clavier.';return;}
+ $('#mic').setAttribute('aria-pressed','false');
+ $('#mic').addEventListener('click',()=>{
+  if(listening||voicePending){cancelVoice();return;}
+  const generation=++voiceGeneration,active=()=>generation===voiceGeneration;
+  const rec=new Speech();recognition=rec;rec.lang='fr-CA';rec.continuous=false;rec.interimResults=true;rec.maxAlternatives=1;
+  voicePending=true;$('#mic span').textContent='Arrêter';$('#mic').setAttribute('aria-label','Arrêter la dictée');$('#mic').setAttribute('aria-pressed','true');$('#voice-status').textContent='Démarrage du micro… Tu peux arrêter à tout moment.';
+  voiceStartTimer=setTimeout(()=>{if(active())cancelVoice('Le micro ne démarre pas. Vérifie son autorisation ou utilise le clavier.');},8000);
+  rec.onstart=()=>{if(!active()){try{rec.abort();}catch{}return;}clearTimeout(voiceStartTimer);voicePending=false;listening=true;$('#mic').classList.add('listening');$('#voice-status').textContent='Écoute… dis un produit ou une question.';voiceTimer=setTimeout(()=>{if(active())cancelVoice('Écoute terminée après 15 secondes. Réessaie ou utilise le clavier.');},15000);};
+  rec.onspeechend=()=>{if(active()){$('#voice-status').textContent='Traitement…';try{rec.stop();}catch{cancelVoice();}}};
+  rec.onresult=e=>{if(!active())return;let interim='';for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal){stopVoice();try{rec.abort();}catch{}submitQuery(t,'voice');return;}interim+=t;}if(interim)$('#voice-status').textContent='Écoute… '+interim;};
+  rec.onerror=e=>{if(!active())return;stopVoice();const msgs={'not-allowed':'Microphone refusé. Autorise le micro dans les réglages du navigateur, ou tape ta recherche.','service-not-allowed':'La dictée n’est pas autorisée. Utilise le clavier.','no-speech':'Aucune parole entendue. Réessaie ou utilise le clavier.','audio-capture':'Aucun microphone disponible. Utilise le clavier.','network':'Le service de dictée est indisponible. Utilise le clavier.','aborted':'Écoute arrêtée.'};$('#voice-status').textContent=msgs[e.error]||'Dictée indisponible. Utilise le clavier.';};
+  rec.onend=()=>{if(!active())return;stopVoice();$('#voice-status').textContent='Écoute terminée. Tu peux réessayer ou taper ta recherche.';};
+  try{rec.start();}catch{cancelVoice('Impossible de démarrer la dictée. Utilise le clavier.');}
+ });
 }
 function stopSync(){events?.close();events=null;clearInterval(poll);poll=null;}
 async function refresh(){if($('#query').value.trim())await search(false);else await home();}
 function startSync(){
  stopSync();
- if(window.EventSource){events=new EventSource('/api/updates?revision='+encodeURIComponent(revision));events.onmessage=async e=>{const r=JSON.parse(e.data);if(r.revision!==revision){revision=r.revision;await refresh();}};events.addEventListener('expired',()=>{stopSync();$('#cashier').classList.add('hidden');$('#gate').classList.remove('hidden');});}
- poll=setInterval(async()=>{if(document.hidden)return;try{const d=await api('/api/revision');if(d.revision!==revision||!$('#connection').classList.contains('hidden')){revision=d.revision;await refresh()}}catch{showConnection('Connexion interrompue. Les résultats affichés peuvent avoir changé.');$('#results').innerHTML='';}},5000);
+ let checking=false;
+ poll=setInterval(async()=>{if(document.hidden||checking)return;checking=true;try{const d=await api('/api/revision');if(d.revision!==revision||!$('#connection').classList.contains('hidden')){revision=d.revision;await refresh()}}catch{showConnection('Connexion interrompue. Les résultats affichés peuvent avoir changé.');$('#results').innerHTML='';}finally{checking=false;}},5000);
 }
-window.addEventListener('offline',()=>{clearTimeout(debounce);clearTimeout(recordTimer);recognition?.abort();stopVoice();controller?.abort();requestNumber++;finishResult();showConnection('Hors connexion. Connecte la tablette à Internet pour vérifier les codes.');$('#results').innerHTML='';stopSync();});
+window.addEventListener('offline',()=>{clearTimeout(debounce);clearTimeout(recordTimer);cancelVoice('Hors connexion. Utilise le clavier après reconnexion.');controller?.abort();requestNumber++;finishResult();showConnection('Hors connexion. Connecte la tablette à Internet pour vérifier les codes.');$('#results').innerHTML='';stopSync();});
 window.addEventListener('online',()=>{refresh();startSync();});
-document.addEventListener('visibilitychange',()=>{if(document.hidden){recognition?.abort();stopSync();}else if(!$('#cashier').classList.contains('hidden')){refresh();startSync();}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelVoice();stopSync();}else if(!$('#cashier').classList.contains('hidden')){refresh();startSync();}});
 (async()=>{updateDevice();setupVoice();try{const s=await api('/api/session');if(s.kiosk_required&&!s.role){$('#gate').classList.remove('hidden');return;}$('#cashier').classList.remove('hidden');await home();startSync();}catch{showConnection('Impossible de joindre le serveur. Recharge la page.')}})();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
