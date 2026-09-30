@@ -99,7 +99,7 @@ async function refresh(){if(photoPending||photoPickerOpen)return;if(source==='ph
 function startSync(){
  stopSync();
  let checking=false;
- poll=setInterval(async()=>{if(document.hidden||checking||photoPending||photoPickerOpen)return;checking=true;try{const d=await api('/api/revision');if(d.revision!==revision||!$('#connection').classList.contains('hidden')){revision=d.revision;await refresh()}}catch{showConnection('Connexion interrompue. Les résultats affichés peuvent avoir changé.');$('#results').innerHTML='';}finally{checking=false;}},5000);
+ poll=setInterval(async()=>{if(document.hidden||checking||photoPending||photoPickerOpen)return;checking=true;try{const d=await api('/api/revision');if(d.revision!==revision||!$('#connection').classList.contains('hidden')){revision=d.revision;await refresh()}}catch{showConnection('Connexion interrompue. Les résultats affichés peuvent avoir changé.');$('#results').innerHTML='';}finally{checking=false;}},15000);
 }
 window.addEventListener('offline',()=>{cancelPhoto();clearTimeout(debounce);clearTimeout(recordTimer);cancelVoice('Hors connexion. Utilise le clavier après reconnexion.');controller?.abort();requestNumber++;finishResult();showConnection('Hors connexion. Connecte ton appareil à Internet pour vérifier les codes.');$('#results').innerHTML='';stopSync();});
 window.addEventListener('online',()=>{refresh();startSync();});
