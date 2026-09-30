@@ -53,7 +53,9 @@ def test_three_admins_conflicting_update_preserves_winner(app,client):
 def test_backup_restores_photos_and_refuses_nonempty(client,tmp_path):
     login(client);image=io.BytesIO();Image.new('RGB',(8,8),'red').save(image,'PNG')
     photo=client.post('/api/admin/images/upload',headers=H,data={'file':(io.BytesIO(image.getvalue()),'photo.png')}).json['image']
-    client.post('/api/admin/products',headers=H,json={'name':'Photo sauvegardée','code':'BACKUP','image':photo})
+    created=client.post('/api/admin/products',headers=H,json={'name':'Photo sauvegardée','code':'BACKUP','image':photo}).json
+    from test_photo_bank import add
+    assert add(client,created['id']).status_code==201
     before=client.get('/api/admin/export/backup').json;backup=tmp_path/'backup.json';backup.write_text(json.dumps(before),encoding='utf8')
     url='sqlite:///'+str(tmp_path/'restored.db')
     env={**os.environ,'DATABASE_URL':url,'APP_ENV':'development','ADMIN_PASSWORD':'Testing-password-123','SECRET_KEY':'restore-test-only-key-over-32-characters','SEED_DEMO':'false','PYTHONUTF8':'1'}
@@ -62,7 +64,7 @@ def test_backup_restores_photos_and_refuses_nonempty(client,tmp_path):
     restored=create_app({'TESTING':True,'DATABASE_URL':url});c=restored.test_client();login(c)
     try:
         after=c.get('/api/admin/export/backup').json
-        for key in ['products','knowledge','images']:assert sorted(before[key],key=lambda x:x['id'])==sorted(after[key],key=lambda x:x['id'])
+        for key in ['products','knowledge','images','photo_references']:assert sorted(before[key],key=lambda x:x['id'])==sorted(after[key],key=lambda x:x['id'])
         assert c.get(photo).status_code==200
         refused=subprocess.run(command,env=env,capture_output=True,text=True);assert refused.returncode!=0
         assert c.get('/api/admin/export/backup').json['products']==after['products']

@@ -1,0 +1,11 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),{JSDOM}=require('jsdom');
+const dom=new JSDOM('',{runScripts:'outside-only',url:'https://example.test/'}),w=dom.window;w.AbortController=AbortController;
+w.eval(fs.readFileSync('static/photo_recognition.js','utf8'));
+const r=w.photoRecognition;
+const a=[1,0,0],b=[0,1,0],c=[0,0,1];
+const bank=[{id:'bok',name:'Bok Choy',code:'004545',image:'white.jpg',vectors:[a,a]},{id:'daikon',name:'Daikon',code:'4598',image:'other.jpg',vectors:[b]}];
+assert.equal(r.rank(a,bank)[0].id,'bok');assert.equal(r.rank(a,bank)[0].query,'004545');assert.equal(r.rank(a,bank)[0].image,'white.jpg');assert.equal(r.rank(c,bank).length,0);
+assert.equal(r.rank(a,[...bank,{...bank[0],id:'similar'}]).length,2);
+let calls=0,mode='first';
+w.fetch=async(url,options)=>{calls++;if(mode==='denied')return{ok:false,status:401};if(mode==='cached'){assert.equal(options.headers['If-None-Match'],'"one"');return{status:304};}return{ok:true,status:200,headers:{get:()=> '"one"'},json:async()=>({model:r.modelId,products:bank})};};
+(async()=>{assert.equal((await r.bank()).products.length,2);mode='cached';assert.equal((await r.bank()).products.length,2);mode='denied';await assert.rejects(r.bank(),/indisponible/);assert.equal(calls,3);dom.window.close();console.log('Photo bank: reference ranking, unknown rejection, ambiguous candidates, exact codes, display images, cache refresh and access failure passed.');})().catch(e=>{console.error(e);dom.window.close();process.exitCode=1;});

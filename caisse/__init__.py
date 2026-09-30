@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
 from PIL import Image, UnidentifiedImageError
-from .models import metadata, products, knowledge, logs, settings, sessions, attempts, images, now
+from .models import metadata, products, knowledge, logs, settings, sessions, attempts, images, photo_references, now
 from .search import resolve, UNKNOWN, normalize
 from .importer import parse_file
 
@@ -286,7 +286,7 @@ def create_app(test_config=None):
         r.headers['Referrer-Policy']='no-referrer'
         r.headers['Permissions-Policy']='microphone=(self), camera=(), geolocation=()'
         r.headers['Content-Security-Policy']="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https: blob:; connect-src 'self'; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
-        if request.path.startswith('/api/') or request.path in ('/','/admin','/essai-photo'): r.headers['Cache-Control']='no-store'
+        if request.path.startswith(('/api/','/admin/reconnaissance/')) or request.path in ('/','/admin','/essai-photo'): r.headers['Cache-Control']='no-store'
         if prod: r.headers['Strict-Transport-Security']='max-age=31536000'
         return r
     @app.errorhandler(ValueError)
@@ -535,6 +535,9 @@ def create_app(test_config=None):
             elif engine.dialect.name=='sqlite': con.exec_driver_sql('BEGIN')
             payload={t.name:[dict(r) for r in con.execute(select(t)).mappings()] for t in [products,knowledge]}
             payload['images']=[{'id':r.id,'mime':r.mime,'data':base64.b64encode(r.data).decode()} for r in con.execute(select(images))]
-        payload.update(schema_version=1,exported_at=now())
+            payload['photo_references']=[{**dict(r),'data':base64.b64encode(r['data']).decode()} for r in con.execute(select(photo_references)).mappings()]
+        payload.update(schema_version=2,exported_at=now())
         return Response(json.dumps(payload,ensure_ascii=False),mimetype='application/json',headers={'Content-Disposition':'attachment; filename=assistant-caisse-sauvegarde.json'})
+    from .photo_bank import register_photo_bank
+    register_photo_bank(app,engine,allowed,revision,changed,lock_revision)
     return app

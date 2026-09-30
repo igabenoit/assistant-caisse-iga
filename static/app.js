@@ -141,7 +141,7 @@ async function searchPhotoCatalog(queries){
   const responses=await Promise.all(queries.map(q=>api('/api/search',{method:'POST',signal:controller.signal,body:JSON.stringify({query:q.query,device,record:false})})));
   if(n!==requestNumber)return;
   revision=responses[0]?.revision||revision;
-  const products=[...new Map(responses.flatMap(d=>d.products||[]).filter(p=>!p.demo).map(p=>[p.id||p.code,p])).values()];
+  const products=[...new Map(responses.flatMap((d,i)=>(d.products||[]).filter(p=>!queries[i].reference||p.id===queries[i].id)).filter(p=>!p.demo).map(p=>[p.id||p.code,p])).values()];
   showConnection();
   if(!products.length){$('#results-title').textContent='Photo non identifiée';$('#results-count').textContent='';$('#results').innerHTML='<div class="empty"><h3>Aucun code trouvé</h3><p>Essaie le nom du produit ou demande au superviseur.</p></div>';return;}
   renderProducts(products);$('#results-title').textContent=products.length===1?'Suggestion photo':'Codes possibles';
@@ -152,6 +152,7 @@ async function searchPhotoCatalog(queries){
 }
 async function capturePhoto(file){
  cancelPhoto();cancelVoice();clearTimeout(debounce);clearTimeout(recordTimer);controller?.abort();
+ $('#query').value='';$('#clear-query').classList.add('hidden');
  const current=++photoGeneration,n=++requestNumber,active=()=>current===photoGeneration&&n===requestNumber;
  photoPending=true;pendingResult();$('#results-title').textContent='Reconnaissance photo';$('#voice-status').textContent='Préparation de la photo…';
  let url;

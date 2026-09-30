@@ -26,3 +26,8 @@ attempts = Table('login_attempts', metadata, Column('id', String(36), primary_ke
     Column('bucket', String(64), nullable=False, index=True), Column('time', Integer, nullable=False))
 images = Table('images', metadata, Column('id', String(36), primary_key=True),
     Column('data', LargeBinary, nullable=False), Column('mime', String(40), nullable=False))
+photo_references = Table('photo_references', metadata,
+    Column('id', String(36), primary_key=True), Column('product_id', String(36), nullable=False, index=True),
+    Column('model', String(80), nullable=False), Column('embedding', Text, nullable=False),
+    Column('data', LargeBinary, nullable=False), Column('active', Boolean, nullable=False, default=True),
+    Column('created_at', String(40), nullable=False))

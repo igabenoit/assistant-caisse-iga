@@ -7,21 +7,21 @@ from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent))
 os.environ['SEED_DEMO']='false'
 from caisse import create_app
-from caisse.models import products,knowledge,images,settings
+from caisse.models import products,knowledge,images,settings,photo_references
 from sqlalchemy import select,insert,update,func
 
 def restore(path):
     data=json.loads(Path(path).read_text(encoding='utf-8'))
-    if data.get('schema_version')!=1: raise ValueError('Version de sauvegarde non reconnue.')
+    if data.get('schema_version') not in (1,2): raise ValueError('Version de sauvegarde non reconnue.')
     app=create_app();engine=app.extensions['db']
     with engine.begin() as con:
-        if any(con.execute(select(func.count()).select_from(t)).scalar() for t in [products,knowledge,images]):
+        if any(con.execute(select(func.count()).select_from(t)).scalar() for t in [products,knowledge,images,photo_references]):
             raise ValueError('La base doit être vide. Restauration annulée sans modification.')
-        for table,key in [(products,'products'),(knowledge,'knowledge'),(images,'images')]:
+        for table,key in [(products,'products'),(knowledge,'knowledge'),(images,'images'),(photo_references,'photo_references')]:
             rows=data.get(key,[])
             if not isinstance(rows,list): raise ValueError('Sauvegarde invalide.')
             for row in rows:
-                if table is images:
+                if table is images or table is photo_references:
                     row={**row,'data':base64.b64decode(row['data'],validate=True)}
                 con.execute(insert(table).values(**row))
         con.execute(update(settings).where(settings.c.key=='revision').values(value=str(uuid.uuid4())))

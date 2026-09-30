@@ -2,7 +2,8 @@
 // ImageNet classes identify broad families, never PLUs or bio status.
 window.photoRecognition=(()=>{
  const families={937:['Brocoli','brocoli'],938:['Chou-fleur','chou fleur'],939:['Courgette','courgette'],940:['Courge spaghetti','courge spaghetti'],941:['Courge poivrée','courge poivree'],942:['Courge musquée','courge musquee'],943:['Concombre','concombre'],944:['Artichaut','artichaut'],945:['Poivron','poivron'],947:['Champignon','champignon'],948:['Pomme — variété à confirmer','pomme'],949:['Fraise','fraise'],950:['Orange','orange'],951:['Citron','citron'],952:['Figue','figue'],953:['Ananas','ananas'],954:['Banane','banane'],957:['Grenade','grenade']};
- let loading;
+ let loading,featureModel,bankCache=null,bankTag='',bankLoading;
+ const modelId='mobilenet-v1-050-gap-v1';
  function candidates(scores){
   const ranked=Array.from(scores,(score,index)=>({score,index})).sort((a,b)=>b.score-a.score);
   if(!ranked.length||!families[ranked[0].index]||ranked[0].score<.25)return [];
@@ -26,11 +27,50 @@ window.photoRecognition=(()=>{
   })().catch(error=>{loading=null;throw error;});
   return loading;
  }
- async function recognize(canvas,onStatus){
+ async function recognizeGeneral(canvas,onStatus){
   onStatus('Chargement du moteur gratuit… Au premier essai, environ 7 Mo sont téléchargés.');
   const model=await getModel(),tf=window.tf;onStatus('Analyse de la photo sur cet appareil…');await tf.nextFrame();
   const output=tf.tidy(()=>{const pixels=tf.browser.fromPixels(canvas).toFloat();const input=tf.image.resizeBilinear(pixels,[224,224]).div(127.5).sub(1).expandDims(0);return model.predict(input);});
   try{return candidates(await output.data());}finally{output.dispose();}
  }
- return {recognize,candidates,preload:getModel};
+
+ async function embed(canvas,onStatus=()=>{}){
+  onStatus('Préparation du moteur photo…');const model=await getModel(),tf=window.tf;
+  if(!featureModel)featureModel=tf.model({inputs:model.inputs,outputs:model.getLayer('global_average_pooling2d_1').output});
+  await tf.nextFrame();
+  const result=tf.tidy(()=>featureModel.predict(tf.image.resizeBilinear(tf.browser.fromPixels(canvas).toFloat(),[224,224]).div(127.5).sub(1).expandDims(0)));
+  try{const values=Array.from(await result.data()),norm=Math.hypot(...values);if(!norm)throw Error('Photo inexploitable. Reprends-la.');return values.map(v=>v/norm);}finally{result.dispose();}
+ }
+ async function bank(){
+  if(bankLoading)return bankLoading;
+  bankLoading=(async()=>{
+   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
+   try{
+    const response=await fetch('/api/photo-bank',{credentials:'same-origin',cache:'no-store',signal:controller.signal,headers:bankTag?{'If-None-Match':bankTag}:{}});
+    if(response.status===304&&bankCache)return bankCache;
+    if(!response.ok)throw Error('Banque photo indisponible. Vérifie la connexion au magasin.');
+    const data=await response.json();if(data.model!==modelId)throw Error('Recharge la page pour mettre à jour le moteur photo.');bankCache=data;bankTag=response.headers.get('ETag')||'';return data;
+   }catch(e){if(e.name==='AbortError')throw Error('La banque photo met trop de temps à répondre. Réessaie.');throw e;}
+   finally{clearTimeout(timer);bankLoading=null;}
+  })();return bankLoading;
+ }
+ function rank(vector,products){
+  const ranked=products.map(p=>{
+   const scores=p.vectors.filter(v=>v.length===vector.length).map(v=>v.reduce((sum,x,i)=>sum+x*vector[i],0)).filter(Number.isFinite).sort((a,b)=>b-a);
+   return {...p,score:scores.length?(scores[0]*.8+(scores[1]??scores[0])*.2):-1};
+  }).sort((a,b)=>b.score-a.score);
+  if(!ranked.length||ranked[0].score<.75)return [];
+  // These are conservative trial thresholds, not calibrated probabilities.
+  return ranked.filter(p=>p.score>=.75&&p.score>=ranked[0].score-.07).slice(0,3).map(p=>({label:p.name,query:p.code,id:p.id,reference:true,image:p.image}));
+ }
+ async function recognizeBank(canvas,onStatus=()=>{}){
+  const data=await bank();if(!data.products.length)return [];
+  onStatus('Comparaison avec les photos du magasin…');const vector=await embed(canvas,onStatus);return rank(vector,data.products);
+ }
+ async function recognize(canvas,onStatus=()=>{}){
+  onStatus('Vérification de la banque du magasin…');const data=await bank();
+  if(!data.products.length)return recognizeGeneral(canvas,onStatus);
+  const vector=await embed(canvas,onStatus);onStatus('Comparaison avec les produits du magasin…');return rank(vector,data.products);
+ }
+ return {recognize,recognizeBank,embed,rank,bank,modelId,candidates,preload:getModel};
 })();
