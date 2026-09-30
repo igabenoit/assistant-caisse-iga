@@ -11,3 +11,22 @@ vm.runInNewContext(fs.readFileSync(require('path').join(__dirname,'../static/sw.
  assert.equal(await request('/','navigate'),'cached:/static/offline.html');assert.equal(await request('/admin','navigate'),'cached:/static/offline.html');
  console.log('PWA: activation, obsolete shell removal, API exclusion, network-first navigation and offline fallback passed. No installation on a physical iPad tested.');
 })().catch(e=>{console.error(e);process.exitCode=1});
+
+// Client update lifecycle, simulated browser; no claim of native iPad installation.
+async function clientUpdate(){
+ const {JSDOM,VirtualConsole}=require('jsdom'),root=require('path').resolve(__dirname,'..');
+ let changed,reloads=0;const vc=new VirtualConsole();vc.on('jsdomError',e=>{if(e.message.includes('navigation'))reloads++;else throw e});
+ const dom=new JSDOM(fs.readFileSync(root+'/templates/index.html','utf8'),{url:'https://caisse.test',runScripts:'outside-only',pretendToBeVisual:true,virtualConsole:vc}),w=dom.window;
+ w.AbortController=AbortController;Object.defineProperty(w,'isSecureContext',{value:true});
+ w.SpeechRecognition=class{constructor(){w.rec=this}start(){this.onstart?.()}abort(){this.onend?.()}};
+ Object.defineProperty(w.navigator,'serviceWorker',{value:{controller:{},addEventListener:(name,fn)=>{if(name==='controllerchange')changed=fn},register:async()=>({update:async()=>{}})}});
+ w.fetch=async url=>({ok:true,json:async()=>url==='/api/session'?{kiosk_required:false}:{products:[],revision:'r'}});
+ try{
+  w.eval(fs.readFileSync(root+'/static/app.js','utf8'));await new Promise(r=>setTimeout(r,20));
+  w.document.querySelector('#query').value='banane plantain';w.document.querySelector('#mic').click();changed();assert.equal(reloads,0);
+  w.document.querySelector('#mic').click();await new Promise(r=>setTimeout(r,1100));
+  assert.equal(reloads,1);assert.equal(w.sessionStorage.getItem('caisse-update-query'),'banane plantain');changed();assert.equal(reloads,1);
+  console.log('PWA client: mise à jour attend la fin du micro, conserve le texte et ne recharge qu’une fois (simulation).');
+ }finally{w.close()}
+}
+clientUpdate().catch(e=>{console.error(e);process.exitCode=1});
