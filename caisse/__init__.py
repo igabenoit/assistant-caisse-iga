@@ -289,7 +289,7 @@ def create_app(test_config=None):
         r.headers['X-Content-Type-Options']='nosniff'; r.headers['X-Frame-Options']='DENY'
         r.headers['Referrer-Policy']='no-referrer'
         r.headers['Permissions-Policy']='microphone=(self), camera=(), geolocation=()'
-        r.headers['Content-Security-Policy']="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https: blob:; connect-src 'self'; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+        r.headers['Content-Security-Policy']="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https: blob: data:; connect-src 'self'; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
         if request.path.startswith(('/api/','/admin/reconnaissance/')) or request.path in ('/','/admin','/essai-photo'): r.headers['Cache-Control']='no-store'
         if prod: r.headers['Strict-Transport-Security']='max-age=31536000'
         return r
