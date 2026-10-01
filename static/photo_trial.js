@@ -17,7 +17,7 @@ async function previewPhoto(file){
   await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(new Error('Cette photo ne peut pas être ouverte. Reprends-la avec la caméra ou choisis un fichier JPG, PNG ou WebP.'));image.src=sourceUrl;});
   if(current!==generation)return;
   if(!image.naturalWidth||!image.naturalHeight||image.naturalWidth*image.naturalHeight>50000000)throw new Error('Cette photo est trop grande. Choisis une résolution plus petite.');
-  const ratio=Math.min(1,1280/Math.max(image.naturalWidth,image.naturalHeight));
+  const ratio=Math.min(1,640/Math.max(image.naturalWidth,image.naturalHeight));
   const canvas=document.createElement('canvas');canvas.width=Math.round(image.naturalWidth*ratio);canvas.height=Math.round(image.naturalHeight*ratio);
   const context=canvas.getContext('2d');if(!context)throw new Error('L’aperçu est indisponible sur ce navigateur.');
   context.fillStyle='white';context.fillRect(0,0,canvas.width,canvas.height);context.drawImage(image,0,0,canvas.width,canvas.height);
